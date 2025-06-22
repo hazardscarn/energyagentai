@@ -17,3 +17,4 @@ marketing_agent/agent copy.py
 models
 .env copy
 vizapp.py
+dataset_retrieval_example.py
