@@ -563,11 +563,12 @@ def coordinator_page():
         # Quick examples
         st.markdown("### 💡 Quick Examples")
         examples = [
-            "Analyze energy efficiency for customer CUST000001",
-            "Create sales campaign for customer CUST000002", 
-            "Show usage chart for customer CUST000003",
+            "Analyze energy efficiency for customer CUST000042",
+            "Create personalized sales campaign for customer CUST00002508",
+            "Create a personalized retention email for customer CUST00001515"
             "What is the average churn rate by city?",
-            "Complete analysis for customer CUST000001"
+            "Create a plot of average churn rate by city",
+            "Create a detailed report on what the main causes for churn in calgary"
         ]
         
         for example in examples:

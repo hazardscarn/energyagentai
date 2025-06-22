@@ -284,6 +284,8 @@ TONE GUIDELINES:
 - Friendly: Warm, approachable, conversational
 - Appreciative: Grateful, value-focused, recognition-heavy
 
+Always sign off with name/Signature as Alberta Energy AI. Do not add random signatures or company names.
+
 Return ONLY the email content without any JSON formatting or metadata.
 Make the email feel genuinely personal and data-informed, not generic.
 """
