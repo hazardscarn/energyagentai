@@ -9,3 +9,4 @@ adk_separated_demo.py
 main_agent_app copy.py
 marketing_outputs
 models
+.env
