@@ -18,3 +18,4 @@ models
 .env copy
 vizapp.py
 dataset_retrieval_example.py
+requirements copy.txt
