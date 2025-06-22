@@ -10,3 +10,10 @@ main_agent_app copy.py
 marketing_outputs
 models
 .env
+marketing_agent\agent copy 2.py
+marketing_agent\agent copy.py
+marketing_agent/agent copy 2.py
+marketing_agent/agent copy.py
+models
+.env copy
+vizapp.py
