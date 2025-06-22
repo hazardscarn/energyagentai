@@ -7,7 +7,7 @@ from typing import Optional, Dict, Any
 from google.adk.agents import Agent
 import os
 
-# For image generation - simplified approach
+
 from google import genai
 from google.genai import types
 
@@ -27,7 +27,7 @@ def _generate_specialist_image(campaign_instructions: str, specialist_type: str)
     """Generate specialist-specific marketing image using Vertex AI - FIXED VERSION"""
     
     try:
-        print(f"🎨 Generating {specialist_type} image...")
+        print(f"Generating {specialist_type} image...")
         
         # Get specific visual elements for the campaign
         visual_elements = _extract_visual_elements(campaign_instructions, specialist_type)
@@ -47,8 +47,7 @@ def _generate_specialist_image(campaign_instructions: str, specialist_type: str)
         - Photorealistic and commercially viable
         """
         
-        from google import genai
-        from google.genai import types
+
         
         client = genai.Client(
             vertexai=True,
@@ -229,6 +228,8 @@ def _extract_visual_elements(campaign_instructions: str, specialist_type: str = 
         - Satisfied homeowner
         - Quality home improvements
         - Modern, well-maintained home
+        - Green Energy solutions if applicable
+        - Technology integration if applicable
         """
     
     return base_scene
