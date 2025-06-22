@@ -1,0 +1,4 @@
+bigquery:
+  project_id: 'energyagentai'
+  dataset_id: 'alberta_energy_ai'
+  region: 'us-central1'

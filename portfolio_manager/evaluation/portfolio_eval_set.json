@@ -1,0 +1,120 @@
+"""
+Portfolio Manager Agent Evaluation Setup
+Following ADK evaluation patterns from customer service agent
+"""
+
+# evaluation/portfolio_eval_set.json
+{
+  "eval_set_name": "portfolio_manager_evaluation",
+  "description": "Evaluation set for Portfolio Manager Agent testing key business scenarios",
+  "version": "1.0",
+  "eval_cases": [
+    {
+      "id": "churn_analysis_basic",
+      "input": {
+        "user_id": "test_analyst_1",
+        "message": "What factors drive customer churn for high-income customers?"
+      },
+      "expected_behavior": {
+        "should_use_tools": ["generate_sql_query", "analyze_ml_model"],
+        "should_mention_models": ["churn"],
+        "should_include_analysis": ["SHAP", "factors", "probability"],
+        "should_provide_insights": true
+      },
+      "scoring_criteria": {
+        "tool_usage": "Must generate SQL query and perform SHAP analysis",
+        "accuracy": "Should identify correct churn model factors",
+        "business_value": "Must provide actionable business insights"
+      }
+    },
+    {
+      "id": "green_energy_upsell",
+      "input": {
+        "user_id": "test_analyst_2", 
+        "message": "Analyze green energy plan upsell opportunities for customers in Calgary with age over 30"
+      },
+      "expected_behavior": {
+        "should_use_tools": ["generate_sql_query", "analyze_ml_model"],
+        "should_mention_models": ["upsell_green_plan"],
+        "should_filter_by": ["Calgary", "age > 30"],
+        "should_provide_insights": true
+      },
+      "scoring_criteria": {
+        "targeting": "Must correctly filter for Calgary customers over 30",
+        "model_selection": "Should use upsell_green_plan model",
+        "insights": "Must provide upsell strategy recommendations"
+      }
+    },
+    {
+      "id": "clv_calculation",
+      "input": {
+        "user_id": "test_analyst_3",
+        "message": "Calculate customer lifetime value for commercial customers with high satisfaction scores"
+      },
+      "expected_behavior": {
+        "should_use_tools": ["generate_sql_query", "calculate_customer_clv"],
+        "should_filter_by": ["commercial", "satisfaction"],
+        "should_provide_metrics": ["average CLV", "total CLV", "top customers"]
+      },
+      "scoring_criteria": {
+        "segmentation": "Must correctly identify commercial customers",
+        "clv_calculation": "Should provide accurate CLV metrics", 
+        "insights": "Must identify high-value customer characteristics"
+      }
+    },
+    {
+      "id": "protective_factors_analysis",
+      "input": {
+        "user_id": "test_analyst_4",
+        "message": "What factors help prevent customer churn? Show me protective factors."
+      },
+      "expected_behavior": {
+        "should_use_tools": ["generate_sql_query", "analyze_ml_model"],
+        "should_mention_models": ["churn"],
+        "should_specify_target": ["negative", "protective"],
+        "should_provide_retention_strategy": true
+      },
+      "scoring_criteria": {
+        "model_configuration": "Must use churn model with negative factors",
+        "factor_identification": "Should identify retention-driving factors",
+        "strategy": "Must provide customer retention recommendations"
+      }
+    },
+    {
+      "id": "multi_model_comparison",
+      "input": {
+        "user_id": "test_analyst_5",
+        "message": "Compare HVAC and solar cross-sell opportunities for customers with annual income over 100K"
+      },
+      "expected_behavior": {
+        "should_use_tools": ["generate_sql_query", "analyze_ml_model"],
+        "should_analyze_multiple_models": ["crosssell_hvac", "crosssell_solar"],
+        "should_compare_results": true,
+        "should_provide_recommendations": true
+      },
+      "scoring_criteria": {
+        "multi_model_analysis": "Must analyze both HVAC and solar models",
+        "comparison": "Should compare cross-sell probabilities",
+        "strategy": "Must recommend optimal cross-sell approach"
+      }
+    }
+  ],
+  "evaluation_criteria": {
+    "tool_usage_accuracy": {
+      "weight": 0.3,
+      "description": "Correct selection and usage of appropriate tools"
+    },
+    "business_insight_quality": {
+      "weight": 0.4, 
+      "description": "Quality and actionability of business insights provided"
+    },
+    "technical_accuracy": {
+      "weight": 0.2,
+      "description": "Accuracy of SQL queries and ML model analysis"
+    },
+    "response_completeness": {
+      "weight": 0.1,
+      "description": "Completeness of response addressing user query"
+    }
+  }
+}

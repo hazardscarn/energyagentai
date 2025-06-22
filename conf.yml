@@ -1,0 +1,88 @@
+data:
+  raw_data_path: "data//customer_profile.txt"
+  processed_data_path: "data//processed_data.csv"
+  data_dictionary: "data//data_dictionary.csv"
+  features:
+    target: 'is_churned'
+    cat_features: ['customer_segment','customer_type','home_ownership','employment_status','education_level','city','heating_type','seasonal_usage_pattern','current_rate_plan','contract_type','previous_provider','green_energy_preference','tech_savviness','price_sensitivity','communication_preference','paperless_billing','oil_gas_employment','economic_sensitivity','regulated_utility_consideration','payment_method','business_type','business_size']
+    num_features: ['tenure_months','age','annual_income','household_size','home_value','credit_score','service_address','monthly_usage_kwh','peak_demand_kw','property_age','rate_plan_changes','satisfaction_score','nps_score','app_usage_monthly','website_visits_monthly','call_center_interactions_12m','competitive_quotes_received','late_payment_rate','avg_monthly_bill','complaint_history','service_interruptions_12m','bill_shock_events']
+    id_features: ['customer_id','account_number']
+    target_majority_class: "No"
+model:
+  description: |
+    - The model used is XGBOOST (Extreme Gradient Boosting) classification model trained on the telecom churn dataset. 
+        - It is trained to predict the churn of customers based on the features provided in the dataset.
+        - XGBOOST models are known for their speed and performance.
+    - You can ask more details on model accuracy if needed.    
+    - SHAP explanations are generated to interpret the model's predictions on local and global levels.
+    - Counterfactual explanations are built with DICE models built over base XGBOOST (Extreme Gradient Boosting) model,to provide recommendations to reduce their churn probability of the customers
+  features:
+    cat_features: ['customer_segment','customer_type','home_ownership','employment_status','education_level','city','heating_type','seasonal_usage_pattern','current_rate_plan','contract_type','previous_provider','green_energy_preference','tech_savviness','price_sensitivity','communication_preference','paperless_billing','oil_gas_employment','economic_sensitivity','regulated_utility_consideration','payment_method','business_type','business_size']
+    num_features: ['tenure_months','age','annual_income','household_size','home_value','credit_score','service_address','monthly_usage_kwh','peak_demand_kw','property_age','rate_plan_changes','satisfaction_score','nps_score','app_usage_monthly','website_visits_monthly','call_center_interactions_12m','competitive_quotes_received','late_payment_rate','avg_monthly_bill','complaint_history','service_interruptions_12m','bill_shock_events']
+    target: 'is_churned'
+    id_features: ['customer_id','account_number']
+    prediction_column: 'prediction'
+
+  params:
+    max_depth: 4
+    min_child_weight: 15
+    eta: 0.01
+    subsample: 0.8
+    colsample_bytree: 0.7
+    objective: 'binary:logistic'
+    eval_metric: 'auc'
+    gamma: 2
+    reg_lambda: 5
+    reg_alpha: 2
+  other_params:
+    num_boost_round: 1000
+    early_stopping_rounds: 30
+    test_size: 0.1
+  train_category_levels:  'train_categories.json'
+dice:
+  total_cfs: 10
+  desired_class: 0
+  top_n: 4
+  diversity_weight: 1
+  permitted_range:
+    currentequipmentdays: [150,500]
+    monthlyrevenue: [10,90]
+    directorassistedcalls: [0,1]
+    overageminutes: [0,40]
+    roamingcalls: [0,1]
+    droppedblockedcalls: [0,10]
+    customercarecalls: [0,2]
+    threewaycalls: [0,1]
+    callforwardingcalls: [0,1]
+    callwaitingcalls: [0,1]
+    activesubs: [1,4]
+    handsets: [1,4]
+    handsetmodels: [1,2]
+    retentioncalls: [0,1]
+    referralsmadebysubscriber: [0,1]
+    revenue_per_minute: [0.1,1]
+    avg_call_duration: [1,45]
+    customer_support_interaction: [0,2]
+    handsetprice: [40,150]
+    roamingcalls: [0,1]
+    handsetwebcapable: ['yes','no']
+  cf_recommendations: "test_counterfactual_recommendations.csv"
+    
+llm_subsets:
+  action_features: ['currentequipmentdays','monthlyrevenue',
+    'directorassistedcalls', 'overageminutes', 'roamingcalls', 'droppedblockedcalls',
+    'customercarecalls', 'threewaycalls','callforwardingcalls', 'callwaitingcalls','activesubs', 'handsets', 'handsetmodels', 
+     'retentioncalls','referralsmadebysubscriber','revenue_per_minute','avg_call_duration',
+    'customer_support_interaction','handsetprice','roamingcalls','handsetwebcapable']
+  customer_features: ['service_tenure','childreninhh', 'handsetrefurbished', 'truckowner', 'rvowner', 'homeownership', 'buysviamailorder',
+    'respondstomailoffers', 'optoutmailings', 'nonustravel', 'ownscomputer',
+    'hascreditcard', 'newcellphoneuser', 'notnewcellphoneuser', 'ownsmotorcycle', 'creditrating', 'prizmcode',
+    'occupation', 'maritalstatus','service_city','incomegroup']
+  device_features: ['handsetprice','handsetmodels','handsets','currentequipmentdays']
+  contract_features: ['monthsinservice','monthlyrevenue','monthlyminutes','totalrecurringcharge','percchangeminutes',
+    'percchangerevenues','activesubs','retentionoffersaccepted',
+    'referralsmadebysubscriber','revenue_per_minute']
+  call_features: ['directorassistedcalls','overageminutes','roamingcalls','droppedblockedcalls',
+    'customercarecalls','threewaycalls','callforwardingcalls','callwaitingcalls','inboundcalls','droppedcalls',
+    'receivedcalls','outboundcalls','peakcallsinout','offpeakcallsinout','avg_call_duration']
+  

@@ -1,0 +1,259 @@
+feature,feature_group,feature_effect,probability_contribution,Feature_Importance_Rank,SHAP_Value
+heating_type,electric,increases,3.8319766521453857,1,0.171064093708992
+heating_type,gas,decreases,5.0309062004089355,1,-0.2129904180765152
+heating_type,heat_pump,decreases,5.026030540466309,1,-0.21278880536556244
+heating_type,oil,increases,4.384028911590576,1,0.1965443193912506
+heating_type,solar,decreases,4.665160179138184,1,-0.19783608615398407
+monthly_usage_kwh,"(1012.0, 1163.0]",decreases,2.7951478958129883,2,-0.1196279302239418
+monthly_usage_kwh,"(1163.0, 1304.0]",decreases,2.6641368865966797,2,-0.11409907788038254
+monthly_usage_kwh,"(1304.0, 1458.0]",decreases,2.516227960586548,2,-0.10784868896007538
+monthly_usage_kwh,"(1458.0, 1626.0]",increases,1.9740521907806396,2,0.08694744855165482
+monthly_usage_kwh,"(1626.0, 1833.0]",increases,3.435570001602173,2,0.1529110074043274
+monthly_usage_kwh,"(1833.0, 2101.0]",increases,3.8890957832336426,2,0.17368927597999573
+monthly_usage_kwh,"(2101.0, 2513.0]",increases,4.127967357635498,2,0.18469591438770294
+monthly_usage_kwh,"(2513.0, 5348.0]",increases,3.797692060470581,2,0.16948914527893066
+monthly_usage_kwh,"(357.999, 843.0]",decreases,3.730553388595581,2,-0.15890803933143616
+monthly_usage_kwh,"(843.0, 1012.0]",decreases,3.220587968826294,2,-0.1375350058078766
+property_age,"(10.0, 15.0]",decreases,5.005645751953125,3,-0.21194522082805634
+property_age,"(15.0, 20.0]",increases,1.496642827987671,3,0.06570670753717422
+property_age,"(20.0, 25.0]",increases,1.4905214309692383,3,0.06543517857789993
+property_age,"(25.0, 30.0]",increases,1.4902174472808838,3,0.06542162597179413
+property_age,"(30.0, 35.0]",increases,1.3503193855285645,3,0.05922480300068855
+property_age,"(35.0, 39.0]",increases,1.3485312461853027,3,0.05914551764726639
+property_age,"(39.0, 44.0]",increases,1.3480842113494873,3,0.0591258704662323
+property_age,"(4.999, 10.0]",decreases,5.072444915771484,3,-0.21470896899700165
+property_age,"(44.0, 50.0]",increases,1.3462424278259277,3,0.059044357389211655
+property_age,"(50.0, 54.0]",increases,1.3448774814605713,3,0.05898401886224747
+home_ownership,own,increases,1.2607276439666748,4,0.05526256561279297
+home_ownership,rent,decreases,2.0357906818389893,4,-0.0874820202589035
+avg_monthly_bill,"(109.0, 131.0]",decreases,1.0302424430847168,5,-0.044522933661937714
+avg_monthly_bill,"(131.0, 150.0]",decreases,0.9735047817230225,5,-0.042084623128175735
+avg_monthly_bill,"(150.0, 169.0]",decreases,0.8143305778503418,5,-0.03523630276322365
+avg_monthly_bill,"(169.0, 189.0]",decreases,0.768667459487915,5,-0.03326937556266785
+avg_monthly_bill,"(189.0, 211.0]",decreases,0.2807915210723877,5,-0.012188504450023174
+avg_monthly_bill,"(211.0, 238.0]",increases,0.3351569175720215,5,0.014603995718061924
+avg_monthly_bill,"(238.0, 272.0]",increases,1.2329161167144775,5,0.0540333054959774
+avg_monthly_bill,"(272.0, 328.0]",increases,1.8845200538635254,5,0.08295298367738724
+avg_monthly_bill,"(328.0, 717.0]",increases,1.7060339450836182,5,0.07500510662794113
+avg_monthly_bill,"(43.999, 109.0]",decreases,1.0877728462219238,5,-0.046993568539619446
+home_value,"(-0.001, 236074.8]",decreases,0.5950987339019775,6,-0.025783639401197433
+home_value,"(236074.8, 362837.0]",increases,0.42626261711120605,6,0.01858430542051792
+home_value,"(362837.0, 488938.8]",increases,0.4289567470550537,6,0.01870199665427208
+home_value,"(488938.8, 616146.5]",increases,0.42870640754699707,6,0.018691256642341614
+home_value,"(616146.5, 744684.4]",increases,0.43051838874816895,6,0.01877029798924923
+home_value,"(744684.4, 872619.5]",increases,0.4263460636138916,6,0.018587971106171608
+home_value,"(872619.5, 999995.0]",increases,0.4299163818359375,6,0.01874406822025776
+household_size,"(-0.001, 1.0]",increases,0.32504796981811523,7,0.014162451028823853
+household_size,"(1.0, 2.0]",increases,0.179290771484375,7,0.0078047229908406734
+household_size,"(2.0, 3.0]",decreases,0.08276104927062988,7,-0.003596901660785079
+household_size,"(3.0, 4.0]",decreases,0.21912455558776855,7,-0.00951552577316761
+household_size,"(4.0, 5.0]",decreases,0.22975802421569824,7,-0.009976563975214958
+peak_demand_kw,"(0.889, 2.65]",decreases,0.27054548263549805,8,-0.011744700372219086
+peak_demand_kw,"(2.65, 3.24]",decreases,0.2542078495025635,8,-0.011036349460482597
+peak_demand_kw,"(3.24, 3.76]",decreases,0.10012388229370117,8,-0.004351173527538776
+peak_demand_kw,"(3.76, 4.26]",decreases,0.0906825065612793,8,-0.003940845839679241
+peak_demand_kw,"(4.26, 4.79]",decreases,0.009065866470336914,8,-0.000394292117562145
+peak_demand_kw,"(4.79, 5.4]",increases,0.05316734313964844,8,0.0023126411251723766
+peak_demand_kw,"(5.4, 6.13]",increases,0.19242167472839355,8,0.008376941084861755
+peak_demand_kw,"(6.13, 7.07]",increases,0.2592623233795166,8,0.011291785165667534
+peak_demand_kw,"(7.07, 8.64]",increases,0.31825900077819824,8,0.013866185210645199
+peak_demand_kw,"(8.64, 21.63]",increases,0.2868950366973877,8,0.012497210875153542
+annual_income,"(105053.6, 126332.0]",decreases,0.019115209579467773,9,-0.0008312594145536423
+annual_income,"(126332.0, 348587.0]",decreases,0.0287473201751709,9,-0.0012498873984441161
+annual_income,"(27668.999, 46486.0]",decreases,0.023293495178222656,9,-0.001012794440612197
+annual_income,"(46486.0, 53951.8]",decreases,0.047647953033447266,9,-0.0020713049452751875
+annual_income,"(53951.8, 60448.0]",decreases,0.03301501274108887,9,-0.0014351954450830817
+annual_income,"(60448.0, 67032.0]",increases,0.03401637077331543,9,0.001479387516155839
+annual_income,"(67032.0, 74163.5]",increases,0.03780722618103027,9,0.0016444443026557565
+annual_income,"(74163.5, 82023.4]",increases,0.03744959831237793,9,0.0016286807367578149
+annual_income,"(82023.4, 91615.6]",increases,0.0377655029296875,9,0.0016423958586528897
+annual_income,"(91615.6, 105053.6]",increases,0.02262592315673828,9,0.0009839924750849605
+communication_preference,app,increases,0.006449222564697266,10,0.0002802960807457566
+communication_preference,email,increases,0.0015377998352050781,10,6.687242421321571e-05
+communication_preference,mail,decreases,0.011146068572998047,10,-0.0004843947826884687
+communication_preference,phone,decreases,0.003612041473388672,10,-0.00015717619680799544
+communication_preference,text,increases,0.006496906280517578,10,0.00028233128250576556
+credit_score,"(599.999, 628.0]",increases,0.0030875205993652344,11,0.00013421126641333103
+credit_score,"(628.0, 658.0]",increases,0.0031054019927978516,11,0.00013506859249901026
+credit_score,"(658.0, 687.0]",increases,0.0030934810638427734,11,0.00013447640230879188
+credit_score,"(687.0, 708.0]",increases,0.002592802047729492,11,0.00011283540516160429
+credit_score,"(708.0, 723.0]",increases,0.0022649765014648438,11,9.854703966993839e-05
+credit_score,"(723.0, 739.0]",decreases,0.0015377998352050781,11,-6.686778215225786e-05
+credit_score,"(739.0, 758.0]",decreases,0.010061264038085938,11,-0.00043736593215726316
+credit_score,"(758.0, 788.0]",decreases,0.006544589996337891,11,-0.0002844954433385283
+credit_score,"(788.0, 818.0]",decreases,0.004458427429199219,11,-0.0001938378409249708
+credit_score,"(818.0, 849.0]",decreases,0.00024437904357910156,11,-1.0460986231919378e-05
+city,calgary,decreases,0.004041194915771484,12,-0.00017580999701749533
+city,edmonton,increases,0.0018477439880371094,12,8.035387872951105e-05
+city,hamilton,increases,0.005841255187988281,12,0.0002540556888561696
+city,london,increases,0.0018417835235595703,12,8.012326725292951e-05
+city,toronto,increases,0.0018656253814697266,12,8.119230915326625e-05
+city,vancouver,increases,0.0005125999450683594,12,2.2340122086461633e-05
+city,winnipeg,decreases,0.007915496826171875,12,-0.00034440404851920903
+tenure_months,"(101.0, 113.0]",increases,0.0021278858184814453,13,9.27134751691483e-05
+tenure_months,"(113.0, 125.0]",increases,0.004112720489501953,13,0.00017890548042487353
+tenure_months,"(17.0, 29.0]",decreases,0.0008225440979003906,13,-3.5906901757698506e-05
+tenure_months,"(29.0, 41.0]",decreases,0.0008285045623779297,13,-3.602588549256325e-05
+tenure_months,"(41.0, 53.0]",increases,0.0016331672668457031,13,7.112111052265391e-05
+tenure_months,"(5.999, 17.0]",decreases,0.015521049499511719,13,-0.0006748228915967047
+tenure_months,"(53.0, 65.0]",increases,0.00209808349609375,13,9.137179586105049e-05
+tenure_months,"(65.0, 77.0]",increases,0.0021517276763916016,13,9.337337542092428e-05
+tenure_months,"(77.0, 89.0]",increases,0.002092123031616211,13,9.093542757909745e-05
+tenure_months,"(89.0, 101.0]",increases,0.002092123031616211,13,9.098492591874674e-05
+previous_provider,atco,increases,0.003808736801147461,14,0.00016567327838856727
+previous_provider,direct energy,increases,0.003796815872192383,14,0.0001651901111472398
+previous_provider,enmax,decreases,0.002282857894897461,14,-9.946097998181358e-05
+previous_provider,epcor,decreases,0.0023126602172851562,14,-0.00010037860192824155
+previous_provider,unknown,decreases,0.002294778823852539,14,-9.984568896470591e-05
+contract_type,fixed_1yr,decreases,0.0020682811737060547,15,-9.004883759189397e-05
+contract_type,fixed_2yr,decreases,0.0020623207092285156,15,-8.97330537554808e-05
+contract_type,fixed_3yr,increases,0.00209808349609375,15,9.152605343842879e-05
+contract_type,month_to_month,increases,0.0020682811737060547,15,8.999388228403404e-05
+age,"(24.999, 33.0]",increases,0.0005066394805908203,16,2.2105656171333976e-05
+age,"(33.0, 36.0]",increases,0.0004887580871582031,16,2.1511852537514642e-05
+age,"(36.0, 40.0]",increases,0.00047087669372558594,16,2.0547437088680454e-05
+age,"(40.0, 43.0]",increases,0.0004649162292480469,16,2.038542697846424e-05
+age,"(43.0, 46.0]",increases,0.00047087669372558594,16,2.0519630197668448e-05
+age,"(46.0, 50.0]",increases,0.0004589557647705078,16,1.994873491639737e-05
+age,"(50.0, 55.0]",increases,0.0004589557647705078,16,1.9939807316404767e-05
+age,"(55.0, 60.0]",increases,0.00045299530029296875,16,1.9526827600202523e-05
+age,"(60.0, 65.0]",increases,0.00045299530029296875,16,1.9689883629325777e-05
+age,"(65.0, 69.0]",decreases,0.005710124969482422,16,-0.0002482994459569454
+customer_segment,affluent_professionals,decreases,0.0035583972930908203,17,-0.00015460328722838312
+customer_segment,commercial,increases,0.0001728534698486328,17,7.531883966294117e-06
+customer_segment,residential_premium,increases,0.0003457069396972656,17,1.4874011867505033e-05
+customer_segment,residential_standard,increases,0.00045299530029296875,17,1.963770409929566e-05
+customer_segment,small_business,increases,0.0002086162567138672,17,8.8808337750379e-06
+customer_segment,young_professionals,increases,0.0005185604095458984,17,2.27542423090199e-05
+website_visits_monthly,"(0.099, 2.6]",decreases,0.0038564205169677734,18,-0.00016755159595049918
+website_visits_monthly,"(10.9, 15.5]",increases,0.0004470348358154297,18,1.9414033886278048e-05
+website_visits_monthly,"(2.6, 3.6]",increases,0.00045299530029296875,18,1.9644683561637066e-05
+website_visits_monthly,"(3.6, 4.4]",increases,0.00045299530029296875,18,1.9528089978848584e-05
+website_visits_monthly,"(4.4, 5.1]",increases,0.00045299530029296875,18,1.9767061530728824e-05
+website_visits_monthly,"(5.1, 5.8]",increases,0.0004589557647705078,18,1.9947048713220283e-05
+website_visits_monthly,"(5.8, 6.7]",increases,0.0004410743713378906,18,1.9362034436198883e-05
+website_visits_monthly,"(6.7, 7.6]",increases,0.0004470348358154297,18,1.9424578567850403e-05
+website_visits_monthly,"(7.6, 8.9]",increases,0.0004410743713378906,18,1.934110878210049e-05
+website_visits_monthly,"(8.9, 10.9]",increases,0.00043511390686035156,18,1.8996182916453108e-05
+employment_status,employed_ft,increases,0.000667572021484375,19,2.8891747206216678e-05
+employment_status,employed_pt,increases,0.0006556510925292969,19,2.8689326427411288e-05
+employment_status,retired,increases,0.0006496906280517578,19,2.815201696648728e-05
+employment_status,self_employed,decreases,0.0010609626770019531,19,-4.594107304001227e-05
+employment_status,unemployed,decreases,0.0010311603546142578,19,-4.4638305553235114e-05
+paperless_billing,False,decreases,0.0009715557098388672,20,-4.201773481327109e-05
+paperless_billing,True,increases,0.0006794929504394531,20,2.9698971047764644e-05
+oil_gas_employment,False,increases,0.0003635883331298828,21,1.572243490954861e-05
+oil_gas_employment,True,decreases,0.00731348991394043,21,-0.0003179527120664716
+nps_score,"(-22.0, -8.0]",increases,0.0003039836883544922,22,1.3235931874078233e-05
+nps_score,"(-39.0, -22.0]",increases,0.0002980232238769531,22,1.3107372978993226e-05
+nps_score,"(-70.001, -39.0]",decreases,0.0028252601623535156,22,-0.00012279133079573512
+nps_score,"(-8.0, 1.0]",increases,0.0003039836883544922,22,1.3409330676950049e-05
+nps_score,"(1.0, 8.0]",increases,0.0003039836883544922,22,1.3157196008251049e-05
+nps_score,"(15.0, 21.0]",increases,0.0003039836883544922,22,1.3268610018712934e-05
+nps_score,"(21.0, 28.0]",increases,0.0003039836883544922,22,1.3366213352128398e-05
+nps_score,"(28.0, 36.0]",increases,0.0003039836883544922,22,1.3330954971024767e-05
+nps_score,"(36.0, 64.0]",increases,0.0003039836883544922,22,1.3404809578787535e-05
+nps_score,"(8.0, 15.0]",increases,0.00030994415283203125,22,1.345164764643414e-05
+app_usage_monthly,"(-0.001, 2.4]",increases,0.00024437904357910156,23,1.0562392162682954e-05
+app_usage_monthly,"(10.7, 12.7]",increases,0.0002384185791015625,23,1.043426073010778e-05
+app_usage_monthly,"(12.7, 14.7]",increases,0.0002384185791015625,23,1.0416512850497384e-05
+app_usage_monthly,"(14.7, 21.0]",increases,0.0002384185791015625,23,1.011725817079423e-05
+app_usage_monthly,"(2.4, 4.7]",increases,0.0002384185791015625,23,1.0505356840440072e-05
+app_usage_monthly,"(21.0, 28.0]",increases,0.0002384185791015625,23,1.016024179989472e-05
+app_usage_monthly,"(28.0, 35.0]",decreases,0.0020742416381835938,23,-9.023928578244522e-05
+app_usage_monthly,"(4.7, 6.8]",increases,0.0002384185791015625,23,1.0476029274286702e-05
+app_usage_monthly,"(6.8, 8.7]",increases,0.0002384185791015625,23,1.0413978088763542e-05
+app_usage_monthly,"(8.7, 10.7]",increases,0.0002384185791015625,23,1.0403336091258097e-05
+late_payment_rate,"(-0.001, 0.01]",increases,0.0002086162567138672,24,9.025567123899236e-06
+late_payment_rate,"(0.01, 0.019]",increases,0.0002086162567138672,24,9.007710104924627e-06
+late_payment_rate,"(0.019, 0.029]",increases,0.0002086162567138672,24,9.037695235747378e-06
+late_payment_rate,"(0.029, 0.039]",increases,0.0002086162567138672,24,8.879147571860813e-06
+late_payment_rate,"(0.039, 0.048]",increases,0.0002086162567138672,24,8.964746484707575e-06
+late_payment_rate,"(0.048, 0.071]",increases,0.00021457672119140625,24,9.41970483836485e-06
+late_payment_rate,"(0.071, 0.097]",increases,0.00021457672119140625,24,9.322066034656018e-06
+late_payment_rate,"(0.097, 0.122]",increases,0.00021457672119140625,24,9.357244380225893e-06
+late_payment_rate,"(0.122, 0.147]",increases,0.00021457672119140625,24,9.24047071748646e-06
+late_payment_rate,"(0.147, 0.3]",decreases,0.0016450881958007812,24,-7.175397331593558e-05
+business_type,manufacturing,decreases,0.02709031105041504,25,-0.001177757396362722
+business_type,office,decreases,0.036656856536865234,25,-0.0015934049151837826
+business_type,restaurant,decreases,0.030750036239624023,25,-0.0013367804931476712
+business_type,retail,decreases,0.03122687339782715,25,-0.0013575225602835417
+business_type,unknown,increases,0.00021457672119140625,25,9.372988643008284e-06
+business_type,warehouse,increases,0.0003516674041748047,25,1.5411051208502613e-05
+customer_type,commercial,decreases,0.0,26,0.0
+customer_type,residential,decreases,0.0,26,0.0
+education_level,bachelors,decreases,0.0,27,0.0
+education_level,high_school,decreases,0.0,27,0.0
+education_level,masters,decreases,0.0,27,0.0
+education_level,phd,decreases,0.0,27,0.0
+education_level,some_college,decreases,0.0,27,0.0
+education_level,trades_certificate,decreases,0.0,27,0.0
+seasonal_usage_pattern,balanced,decreases,0.0,28,0.0
+seasonal_usage_pattern,high_summer,decreases,0.0,28,0.0
+seasonal_usage_pattern,high_winter,decreases,0.0,28,0.0
+green_energy_preference,False,decreases,0.0,29,0.0
+green_energy_preference,True,decreases,0.0,29,0.0
+current_rate_plan,fixed_rate_1yr,decreases,0.0,30,0.0
+current_rate_plan,fixed_rate_3yr,decreases,0.0,30,0.0
+current_rate_plan,green_plan,decreases,0.0,30,0.0
+current_rate_plan,tiered,decreases,0.0,30,0.0
+current_rate_plan,time_of_use,decreases,0.0,30,0.0
+business_size,large,decreases,0.0,31,0.0
+business_size,medium,decreases,0.0,31,0.0
+business_size,small,decreases,0.0,31,0.0
+business_size,unknown,decreases,0.0,31,0.0
+economic_sensitivity,high,decreases,0.0,32,0.0
+economic_sensitivity,low,decreases,0.0,32,0.0
+economic_sensitivity,medium,decreases,0.0,32,0.0
+tech_savviness,high,decreases,0.0,33,0.0
+tech_savviness,low,decreases,0.0,33,0.0
+tech_savviness,medium,decreases,0.0,33,0.0
+payment_method,auto_pay,decreases,0.0,34,0.0
+payment_method,in_person,decreases,0.0,34,0.0
+payment_method,mail,decreases,0.0,34,0.0
+payment_method,online,decreases,0.0,34,0.0
+regulated_utility_consideration,high,decreases,0.0,35,0.0
+regulated_utility_consideration,low,decreases,0.0,35,0.0
+regulated_utility_consideration,medium,decreases,0.0,35,0.0
+price_sensitivity,high,decreases,0.0,36,0.0
+price_sensitivity,low,decreases,0.0,36,0.0
+price_sensitivity,medium,decreases,0.0,36,0.0
+rate_plan_changes,"(-0.001, 1.0]",decreases,0.0,37,0.0
+rate_plan_changes,"(1.0, 2.0]",decreases,0.0,37,0.0
+satisfaction_score,"(0.999, 1.4]",decreases,0.0,38,0.0
+satisfaction_score,"(1.4, 2.2]",decreases,0.0,38,0.0
+satisfaction_score,"(2.2, 2.8]",decreases,0.0,38,0.0
+satisfaction_score,"(2.8, 3.2]",decreases,0.0,38,0.0
+satisfaction_score,"(3.2, 3.4]",decreases,0.0,38,0.0
+satisfaction_score,"(3.4, 3.6]",decreases,0.0,38,0.0
+satisfaction_score,"(3.6, 3.8]",decreases,0.0,38,0.0
+satisfaction_score,"(3.8, 4.0]",decreases,0.0,38,0.0
+satisfaction_score,"(4.0, 4.2]",decreases,0.0,38,0.0
+satisfaction_score,"(4.2, 4.8]",decreases,0.0,38,0.0
+call_center_interactions_12m,"(-0.001, 2.0]",decreases,0.0,40,0.0
+call_center_interactions_12m,"(11.0, 16.0]",decreases,0.0,40,0.0
+call_center_interactions_12m,"(2.0, 3.0]",decreases,0.0,40,0.0
+call_center_interactions_12m,"(3.0, 4.0]",decreases,0.0,40,0.0
+call_center_interactions_12m,"(4.0, 5.0]",decreases,0.0,40,0.0
+call_center_interactions_12m,"(5.0, 6.0]",decreases,0.0,40,0.0
+call_center_interactions_12m,"(6.0, 7.0]",decreases,0.0,40,0.0
+call_center_interactions_12m,"(7.0, 9.0]",decreases,0.0,40,0.0
+call_center_interactions_12m,"(9.0, 11.0]",decreases,0.0,40,0.0
+competitive_quotes_received,"(-0.001, 2.0]",decreases,0.0,41,0.0
+competitive_quotes_received,"(2.0, 3.0]",decreases,0.0,41,0.0
+competitive_quotes_received,"(3.0, 4.0]",decreases,0.0,41,0.0
+complaint_history,"(-0.001, 1.0]",decreases,0.0,42,0.0
+complaint_history,"(1.0, 3.0]",decreases,0.0,42,0.0
+complaint_history,"(3.0, 4.0]",decreases,0.0,42,0.0
+complaint_history,"(4.0, 5.0]",decreases,0.0,42,0.0
+service_interruptions_12m,"(-0.001, 1.0]",decreases,0.0,43,0.0
+service_interruptions_12m,"(1.0, 3.0]",decreases,0.0,43,0.0
+service_interruptions_12m,"(3.0, 4.0]",decreases,0.0,43,0.0
+service_interruptions_12m,"(4.0, 5.0]",decreases,0.0,43,0.0
+service_interruptions_12m,"(5.0, 6.0]",decreases,0.0,43,0.0
+service_interruptions_12m,"(6.0, 7.0]",decreases,0.0,43,0.0
+service_interruptions_12m,"(7.0, 8.0]",decreases,0.0,43,0.0
+service_interruptions_12m,"(8.0, 9.0]",decreases,0.0,43,0.0
+bill_shock_events,"(-0.001, 1.0]",decreases,0.0,44,0.0
+bill_shock_events,"(1.0, 2.0]",decreases,0.0,44,0.0
+bill_shock_events,"(2.0, 4.0]",decreases,0.0,44,0.0
