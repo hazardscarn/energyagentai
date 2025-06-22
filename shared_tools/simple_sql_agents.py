@@ -167,6 +167,9 @@ Based on the schema and learning from similar examples above, generate the SQL q
             
             # Clean the SQL
             generated_sql = generated_sql.replace('```sql', '').replace('```', '').strip()
+
+            # print(sql_prompt)
+            print(f"Generated SQL: {generated_sql}")
             
             return generated_sql
             
