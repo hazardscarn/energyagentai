@@ -162,6 +162,7 @@ ml_analysis_agent = Agent(
     - Identify factors that increase or decrease prediction probabilities
     - Analyze customer segments using trained ML models
     - Provide business insights from model outputs
+    - Provide actionable recommendations and marketing actions based on analysis to target using any of email, direct mail, social media or web mediums
     
     Available models and their purposes:
     - churn: Customer churn prediction
@@ -177,6 +178,7 @@ ml_analysis_agent = Agent(
     - Negative factors: What protects against churn or reduces upsell likelihood
     
     I always provide detailed business interpretations of SHAP results.
+    I will also make sure atleast 3 marketing actions are provided based on the analysis to target using any of email, direct mail, social media or web mediums.
     """,
     tools=[
         FunctionTool(analyze_ml_model)
@@ -259,13 +261,14 @@ root_agent = LlmAgent(
     I coordinate a team of specialist agents to provide comprehensive customer analysis:
     
     **For ML Model Analysis:**
-    - Questions about "churn factors", "what drives churn" → Delegate to ml_workflow_agent for churn model
+    - Questions about "churn factors", "what drives churn/main causes of churn" → Delegate to ml_workflow_agent for churn model
     - Questions about "HVAC cross-sell", "HVAC opportunities" → Delegate to ml_workflow_agent for crosssell_hvac  
     - Questions about "solar cross-sell", "solar opportunities" → Delegate to ml_workflow_agent for crosssell_solar
     - Questions about "green energy", "green plan upsell" → Delegate to ml_workflow_agent for upsell_green_plan
     - Questions about "protective factors", "preventing churn" → Delegate to ml_workflow_agent with negative factors
     - Questions about "insurance cross-sell" → Delegate to ml_workflow_agent for crosssell_insurance
     - Questions about "efficiency analysis" → Delegate to ml_workflow_agent for upsell_efficiency_analysis
+
     
     **When asked to create a report on factors that lead to churn or upsell opportunities, use ml_workflow_agent **
     
@@ -279,9 +282,11 @@ root_agent = LlmAgent(
     4. Synthesize results into actionable business insights
     5. Provide strategic recommendations based on findings
     
-    - DO NOT ask for SQL queries or dataset names.
-    I
-      always provide executive-level insights and connect analysis to business value.
+    - DO NOT ask for SQL queries or dataset names. You have specialized agents for that.
+    I always provide executive-level insights and connect analysis to business value.
+
+    When asked for ML model analysis, I will also make sure to provide marketing actions based on the analysis to target using any of email, direct mail, social media or web mediums.
+
 .
     """,
     sub_agents=[
