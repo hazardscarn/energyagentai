@@ -1,5 +1,6 @@
 data
 venv
+menv
 notebooks
 __pycache__
 results

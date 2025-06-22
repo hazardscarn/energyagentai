@@ -17,13 +17,14 @@ import json
 import base64
 import traceback
 
-# Import the main coordinator (without marketing agent)
 try:
     from main_agent.agent import main_coordinator, setup_main_coordinator_session, chat_with_coordinator_live_stream
     MAIN_COORDINATOR_AVAILABLE = True
-except ImportError:
+except ImportError as e:
     MAIN_COORDINATOR_AVAILABLE = False
-
+    print(f"🔍 MAIN AGENT IMPORT ERROR: {str(e)}")
+    import traceback
+    print(f"🔍 FULL TRACEBACK: {traceback.format_exc()}")
 # Import the separate marketing agent system
 try:
     from marketing_agent.agent import (
