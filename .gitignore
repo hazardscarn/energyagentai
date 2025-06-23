@@ -1,7 +1,6 @@
 data
 venv
 menv
-notebooks
 __pycache__
 results
 agents
@@ -24,3 +23,4 @@ plan_data
 test_scrape.py
 images_backup
 app.py
+agents_architecture_diagram.zip
