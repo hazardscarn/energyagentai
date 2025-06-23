@@ -1,5 +1,5 @@
 """
-Enhanced Main Coordinator with Marketing Agent Navigation
+Enhanced WattsWise Agent with Marketing Agent Navigation
 Uses Streamlit navigation to separate Marketing Agent as independent system
 """
 
@@ -481,14 +481,15 @@ def coordinator_page():
     
     st.markdown("""
     <div class="main-header">
-        <h1>🏠⚡ Alberta Energy AI - Main Coordinator</h1>
-        <p>Your unified interface for Energy Efficiency, Sales, Visualization, Retention & Portfolio Analysis</p>
+        <h1>⚡ WattsWise Alberta⚡</h1>
+        <h3>Your one stop Assistant for everything at Alberta Energy AI🏠</h3>
+        <p>Powered By Google ADK Agents 🤖</p>
     </div>
     """, unsafe_allow_html=True)
     
     # Check if coordinator is available
     if not MAIN_COORDINATOR_AVAILABLE:
-        st.error("❌ **Main Coordinator Agent Not Available**")
+        st.error("❌ **WattsWise Agent Not Available**")
         st.markdown("""
         **Setup Instructions:**
         1. Ensure `main_agent/agent.py` exists with proper agent configuration
@@ -498,12 +499,12 @@ def coordinator_page():
     
     # Sidebar
     with st.sidebar:
-        st.title("🤖 Main Coordinator")
+        st.title("🤖 WattsWise Agent")
         st.markdown("**AI Hub Status**")
         
         # Load coordinator if not done
         if not st.session_state.coordinator_initialized:
-            with st.spinner("🚀 Loading AI Coordinator..."):
+            with st.spinner("🚀 Loading WattsWise Agent..."):
                 agent, runner, session_service, loaded = load_coordinator_agent()
                 if loaded:
                     st.session_state.coordinator_agent = agent
@@ -529,21 +530,23 @@ def coordinator_page():
         **🧑‍💼 Sales Agent**  
         - Customer campaign generation
         - Upsell/cross-sell opportunities
-        - Email & call scripts
-        
-        **📊 Data Visualization Agent**
-        - Charts & analytics
-        - Visual pattern analysis
+        - Personalized Email & call scripts
                     
         **🧑‍🔧 Retention Agent**
         - Customer retention strategies
         - Personalized emails
         - Call scripts for at-risk customers
-                    
+
+        **📊 Data Visualization Agent**
+        - Charts & analytics
+        - Visual pattern analysis
+                                
         **📈 Portfolio Manager**
         - Portfolio analysis
         - Churn reasoning for customers
         - Cross-sell/upsell patterns
+        - Data Analysis and summarization
+        - Marketing Lead Generation
         """)
         
         st.markdown("---")
@@ -590,7 +593,7 @@ def coordinator_page():
             st.rerun()
     
     # Main chat interface
-    st.markdown("### 💬 Chat with AI Coordinator")
+    st.markdown("### 💬 Chat with WattsWise Agent")
     
     # Display messages
     for message in st.session_state.coordinator_messages:
@@ -607,13 +610,13 @@ def coordinator_page():
                 if st.session_state.show_code:
                     st.markdown(f"""
                     <div class="coordinator-message">
-                        <strong>🤖 AI Coordinator:</strong> {message["content"]}
+                        <strong>🤖 WattsWise Agent:</strong> {message["content"]}
                     </div>
                     """, unsafe_allow_html=True)
                 else:
                     st.markdown(f"""
                     <div class="coordinator-message">
-                        <strong>🤖 AI Coordinator:</strong> ✅ Analysis complete! Here's your visualization:
+                        <strong>🤖 WattsWise Agent:</strong> ✅ Analysis complete! Here's your visualization:
                     </div>
                     """, unsafe_allow_html=True)
                 
@@ -631,7 +634,7 @@ def coordinator_page():
                 # Regular text response
                 st.markdown(f"""
                 <div class="coordinator-message">
-                    <strong>🤖 AI Coordinator:</strong> {message["content"]}
+                    <strong>🤖 WattsWise Agent:</strong> {message["content"]}
                 </div>
                 """, unsafe_allow_html=True)
     
@@ -664,8 +667,9 @@ def marketing_page():
     
     st.markdown("""
     <div class="marketing-header">
-        <h1>🎯 Google ADK Marketing Agent System</h1>
-        <p>Multi-Agent Marketing Campaign Generator powered by Google Agent Development Kit</p>
+        <h1>🎯 WattsWise AI Marketing Agent 🎯</h1>
+        <h3>From Leads to Campaigns for Alberta Energy AI🏠</h3>
+        <p>🤖 Multi-Agent Marketing Campaign Generator powered by Google ADK🤖 </p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -673,13 +677,9 @@ def marketing_page():
     if not MARKETING_AGENT_AVAILABLE:
         st.error("❌ **Google ADK Marketing Agent System Not Available**")
         st.markdown("""
-        **Setup Instructions:**
-        1. Save the marketing agent code as `marketing_agent/agent.py`
-        2. Ensure Google Cloud Project and Vertex AI are configured
-        3. Install dependencies: `pip install google-adk vertexai`
         4. Set environment variables:
-           - `GOOGLE_CLOUD_PROJECT="your-project-id"`
-           - `GOOGLE_CLOUD_LOCATION="us-central1"`
+           - `GOOGLE_CLOUD_PROJECT="Prject ID"`
+           - `GOOGLE_CLOUD_LOCATION="useast1"`
         """)
         return
     
@@ -772,11 +772,9 @@ def marketing_page():
             "**Campaign Requirements**",
             value=st.session_state.get("marketing_campaign_input", ""),
             height=120,
-            placeholder="""Example: Create email campaign for HVAC upgrades targeting Calgary homeowners with old heating systems. Focus on:
+            placeholder="""Generate social media campaign for winter heating preparation. Target homeowners getting ready for cold season.. Focus on:
 - Energy savings and lower utility bills
-- Government rebates and incentives  
 - Winter comfort and reliability
-- Professional installation services
 - 24/7 emergency support""",
             help="Describe your marketing campaign needs in detail. Include target audience, key messages, and campaign goals."
         )
@@ -919,6 +917,157 @@ def marketing_page():
         result = process_marketing_message(campaign_input, selected_medium)
         st.rerun()
 
+
+def about_page():
+    st.markdown("""
+    <div class="main-header">
+        <h1>ℹ️ About Alberta Energy AI</h1>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    Alberta Energy AI is a hypothetical Retail Energy provider in Canada. With over **100K simulated customers** hosted on BigQuery and GCP, Alberta Energy uses **AI agents** to serve them the best.
+
+    At the heart of Alberta Energy is **WattsWise AI**, a multi-agent system powered by **Google Agent Development Kit (ADK)**.
+
+    With WattsWise AI, Alberta Energy AI stands out as a leader in customer service, retention, and sales in the energy sector.
+                
+    **WattsWise AI** is composed of multiple specialized agents, each focused on key tasks:
+
+    ---
+
+    ### 🛠️ Data Tool (SQL + BigQuery)
+    - Connects to BigQuery
+    - Converts natural language to SQL
+    - Queries live data for answers and analysis
+
+    ### 🧠 ML Model Tool
+    - Uses pre-trained ML models hosted on GCP buckets to make predctions
+    - Different Models are:
+        - churn: Customer churn prediction
+        - crosssell_hvac: HVAC system cross-sell probability  
+        - crosssell_insurance: Insurance product cross-sell probability
+        - crosssell_solar: Solar panel cross-sell probability
+        - upsell_green_plan: Green energy plan upsell probability
+        - upsell_efficiency_analysis: Energy efficiency analysis upsell
+        - upsell_surge_protection: Surge protection upsell probability
+    - Uses SHAP explanations to understand and explain model predictions providing each feature's contribution to the prediction
+    - Works for a single customer or for a group of customers
+    - Analyzes customer data for insights
+
+    ### 🔋 Energy Efficiency Agent
+    - Using Data Tool analyzes energy usage patterns from requested customer's smart meter data
+    - Provides recommendations for energy efficiency
+    - Evaluates TOU plan fit and savings
+
+    ### 💼 Sales Agent
+    - Uses ML model tool to predict sales probabilities for 6 Alberta Energy products for a customer
+    - Evaluates eligibility and likelihood of purchase
+    - Uses SHAP explanations to understand and justify predictions
+    - Creates **personalized emails or call scripts** for sales pitches
+
+    ### 🔄 Retention Agent
+    - Uses ML Model Tool for churn prediction models with SHAP for a customer
+    - Creates highly personalized retention messages
+    - Tailors retention emails or call scripts based on **exact churn risk reasons**
+
+    ### 📊 Visualization Agent
+    - Turns plain English queries into visual reports
+    - Uses (Data Tool) BigQuery + matplotlib/seaborn to generate insights
+
+    ### 📁 Portfolio Agent
+    - Performs in-depth market and customer analysis
+    - The Portfolio Agent first uses the SQL Agent to gather data for a region or segment
+    - Uses ML Model tool to analyze customer segments to assess risk or opportunity
+    - It uses SHAP analysis to explain the why behind predictions
+    - With this understanding, the agent:
+        - Identifies key behavioral or demographic patterns for the segment
+        - Suggests remedies to improve outcomes
+        - Recommends 3+ targeted marketing options tailored to the identified root causes
+    🧮 Bonus Skills:
+        - Acts as a data science assistant for business teams
+        - Can answer any exploratory, SQL, or analytics queries
+        - Helps design new products or campaigns based on customer needs and model-driven insights
+
+    ---
+    ### 🎯 Marketing Agent System
+    The **Marketing Agent** takes ideas from Portfolio or Sales insights and:
+    - Creates downloadable marketing packages (email, social, landing page, or direct mail)
+    - Uses ADK agent routing to pick the right specialist
+    - Delivers marketing content with AI-generated visuals and copy
+
+    ---
+    **WattsWise is your AI assistant to serve, retain, and grow your energy customers.**
+    """)
+    
+    # ADD THIS SECTION FOR AGENT FLOW IMAGES
+    st.markdown("---")
+    st.markdown("## 🏗️ Agent Architecture Diagrams")
+    st.markdown("Visual representation of our Google ADK multi-agent system architecture:")
+    
+    # Agent flow images
+    agent_flows = [
+        {
+            "title": "🚀 WattsWise AI Agent",
+            "file": "WattsWiseAI.jpg",
+            "description": "The main coordinator that routes requests to specialized sub-agents"
+        },
+        {
+            "title": "📈 Portfolio Agent",
+            "file": "portfolio_agent_flow.jpg", 
+            "description": "Complex ML workflow with SQL and SHAP analysis capabilities"
+        },
+        {
+            "title": "🎯 Marketing Agent System",
+            "file": "marketing_agent_flow.jpg",
+            "description": "Multi-specialist marketing campaign generation system"
+        },
+        {
+            "title": "🔋 Energy Efficiency Agent",
+            "file": "energy_agent_flow.jpg",
+            "description": "Energy analysis specialist with SQL and efficiency tools"
+        },
+        {
+            "title": "🔄 Retention Agent",
+            "file": "retention_agent_flow.jpg",
+            "description": "Customer retention specialist with churn analysis and content generation"
+        },
+        {
+            "title": "💼 Sales Agent",
+            "file": "sales_agent_flow.jpg", 
+            "description": "Sales opportunity identification and campaign generation agent"
+        },
+        {
+            "title": "📊 Visualization Agent Architecture", 
+            "file": "visualization_agent_flow.jpg",
+            "description": "Sequential agent for SQL data retrieval and intelligent code generation"
+        }
+    ]
+    
+    # Display agent flow images
+    for i, agent in enumerate(agent_flows):
+        st.markdown(f"### {agent['title']}")
+        st.markdown(f"*{agent['description']}*")
+        
+        try:
+            # Try to load and display the image
+            image_path = f"images/{agent['file']}"
+            if os.path.exists(image_path):
+                st.image(image_path, caption=f"{agent['title']} - Architecture Flow", use_container_width=True)
+            else:
+                st.warning(f"⚠️ Image not found: {image_path}")
+                st.info(f"Please save the {agent['title']} flow diagram as `{agent['file']}` in the images folder")
+        except Exception as e:
+            st.error(f"❌ Error loading {agent['file']}: {str(e)}")
+        
+        # Add some spacing between diagrams
+        if i < len(agent_flows) - 1:
+            st.markdown("---")
+    
+    st.markdown("---")
+    st.markdown("*All diagrams show the Google ADK agent architecture with tools, sub-agents, and data flow patterns.*")
+
+
 # =============================================================================
 # MAIN APP WITH NAVIGATION
 # =============================================================================
@@ -928,8 +1077,9 @@ def main():
     
     # Create navigation
     pages = {
-        "🏠 Main Coordinator": coordinator_page,
-        "🎯 Marketing Agent": marketing_page
+        "⚡ WattsWise Agent": coordinator_page,
+        "🎯 Marketing Agent": marketing_page,
+        "ℹ️ About": about_page
     }
     
     # Streamlit navigation
@@ -945,13 +1095,13 @@ def main():
     st.sidebar.markdown("""
     ### 🤖 About This System
     
-    **Main Coordinator**: 
-    Unified hub for Energy, Sales, Visualization, Retention & Portfolio agents
+    **WattsWise Agent**: 
+    Unified hub for Energy Usage Analysis, Sales & Retention Leads, Data Visualization & Analysis by just asking, Portfolio Analysis and more powered by Google ADK agents
     
     **Marketing Agent**: 
-    Separate Google ADK multi-agent system for professional marketing campaigns
+    Separate Google ADK multi-agent system for generating professional marketing campaigns
     
-    Each system operates independently with its own specialized agents and capabilities.
+    One stop shop to understand who your customers are, what they need, how to deliver it, and how to keep them happy!
     """)
     
     # Run selected page

@@ -272,6 +272,8 @@ def email_marketing_specialist_tool(campaign_instructions: str, include_image: b
         - Strong call-to-action
         - Mobile-optimized structure
         - Ready to send immediately
+
+        Always use name/Signature as Alberta Energy AI. Do not add random signatures or company names.
         """
         
         model = GenerativeModel("gemini-2.0-flash")
@@ -335,6 +337,8 @@ def social_media_specialist_tool(campaign_instructions: str, include_image: bool
         - Shareable and engaging
         - Include emojis where appropriate
         - Ready to post immediately
+
+        Always use name/Signature as Alberta Energy AI. Do not add random signatures or company names.
         """
         
         model = GenerativeModel("gemini-2.0-flash")
@@ -402,6 +406,8 @@ def direct_mail_specialist_tool(campaign_instructions: str, include_image: bool 
         - Multiple response mechanisms
         - Print-optimized format
         - High-impact messaging
+
+        Always sign off with name/Signature as Alberta Energy AI. Do not add random signatures or company names.
         """
         
         model = GenerativeModel("gemini-2.0-flash")
@@ -472,6 +478,8 @@ def web_landing_page_specialist_tool(campaign_instructions: str, include_image: 
         - Clear user journey
         - Mobile-first design
         - Ready for development
+
+        Always sign off with name/Signature as Alberta Energy AI. Do not add random signatures or company names.
         """
         
         model = GenerativeModel("gemini-2.0-flash")

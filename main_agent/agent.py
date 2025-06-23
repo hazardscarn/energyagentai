@@ -26,7 +26,7 @@ portfolio_tool = AgentTool(agent=portfolio_manager_agent)
 
 # Enhanced Main Coordinator Agent
 main_coordinator = Agent(
-    name="alberta_energy_ai_coordinator",
+    name="WattsWise_AI",
     model="gemini-2.5-flash-preview-05-20",
     description="Main interface for Alberta Energy AI system - coordinates all energy, sales, and visualization tasks",
     
