@@ -20,3 +20,7 @@ models
 vizapp.py
 dataset_retrieval_example.py
 requirements copy.txt
+plan_data
+test_scrape.py
+images_backup
+app.py
