@@ -375,22 +375,12 @@ Access at `http://localhost:8501`
 
 ```bash
 # For individual agent development and testing
-adk serve --port=8000
+adk web
 
-# Or run specific agents
-adk run energy_efficiency.agent.root_agent
-adk run marketing_agent.agent.root_agent
-adk run retention_agent.agent.root_agent
+# Run the agent you want by selecting it
 ```
 
-#### Option C: Command Line Interface
 
-```bash
-# Interactive CLI for individual agents
-python -m energy_efficiency.agent
-python -m marketing_agent.agent  
-python -m retention_agent.agent
-```
 
 ## 📁 Project Structure
 
