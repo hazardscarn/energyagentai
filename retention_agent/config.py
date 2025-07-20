@@ -20,9 +20,12 @@ class RetentionConfig:
     location: str = "us-central1"
     
     # Model Configuration
-    primary_model: str = "gemini-2.5-pro-preview-05-06"  # For complex content generation
-    default_model: str = "gemini-2.5-flash-preview-05-20"  # For faster operations
-    
+    # primary_model: str = "gemini-2.5-pro-preview-05-06"  # For complex content generation
+    # default_model: str = "gemini-2.5-flash-preview-05-20"  # For faster operations
+    default_model: str = "gemini-2.5-flash"  # For complex reasoning
+    primary_model: str = "gemini-2.5-pro"  # For faster operation    
+
+
     # ML Model Configuration
     bucket_name: str = "albertaenergy-ads"
     

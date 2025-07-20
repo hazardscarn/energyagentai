@@ -19,8 +19,8 @@ class EnergyConfig:
     location: str = "us-central1"
     
     # Model Configuration
-    primary_model: str = "gemini-2.5-pro-preview-05-06"  # For complex content generation
-    default_model: str = "gemini-2.5-flash-preview-05-20"  # For faster operations
+    default_model: str = "gemini-2.5-pro"  # For faster operation
+    primary_model: str = "gemini-2.5-flash"  # For complex content generation
     
     # ADK Configuration
     app_name: str = "energy_advisor"

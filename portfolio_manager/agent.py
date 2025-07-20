@@ -7,6 +7,7 @@ from google.adk.agents import Agent, SequentialAgent, LlmAgent
 from google.adk.tools import FunctionTool
 from vertexai.preview.reasoning_engines import AdkApp
 import os
+import json
 
 # Import shared tools from root shared_tools folder
 from shared_tools.simple_sql_agents import (
@@ -17,6 +18,8 @@ from shared_tools.simple_sql_agents import (
 from shared_tools.mlagent import (
     analyze_model_with_shap_tool
 )
+
+from .subtools import clean_sql_response
 
 
 
@@ -44,8 +47,12 @@ def generate_sql_query(query_description: str) -> str:
         str: Generated SQL query ready for execution
     """
     try:
-        result = generate_sql_query_tool(query_description)
-        return result
+        print(f"SQL Tool 🏠 Called")
+        json_result  = generate_sql_query_tool(query_description)
+        processed_sql_response = clean_sql_response(json_result)
+        print(f"Debug: Raw SQL Result: {json_result}")
+        print(f"Debug: Generated SQL Query: {processed_sql_response}")
+        return processed_sql_response
     except Exception as e:
         return f"Error generating SQL: {str(e)}"
 
@@ -125,23 +132,23 @@ def calculate_customer_clv(sql_query: str) -> str:
 sql_developer_agent = Agent(
     name="sql_developer_agent",
     model=config.default_model,
-    description="SQL specialist that generates and executes queries for customer analysis",
+    description="Specialist that generates and executes queries for customer analysis with the help of tools",
     instruction="""
-    I am an expert SQL developer for Alberta Energy AI customer analysis.
+    I am Specialist that generates and executes queries for customer analysis with the help of tools for Alberta Energy AI customer analysis.
     
-    My responsibilities:
-    - Generate precise SQL queries from natural language requests
-    - Execute queries and return structured data
-    - Ensure queries use SELECT * when data will be used for ML model scoring
+    **My Process:**
+    1. IMMEDIATELY call generate_sql_query tool with the user's request
+    2. IMMEDIATELY call execute_sql_query with the generated SQL
+    3. Return results received from execute_sql_query exactly as received
     
-    I understand customer criteria like:
-    - Demographics: "customers over 50", "annual income above 100K"
-    - Location: "customers in Calgary", "Edmonton residents" 
-    - Behavior: "high usage customers", "satisfied customers"
-    - Business: "commercial customers", "residential customers"
+   Example: 
+   **For "churn analysis in Calgary" requests:**
+    - Call generate_sql_query("Get all customer data for Calgary customers for churn analysis")
+    - Execute the query
+    - Pass results to next agent
+
+    I ALWAYS use my tools - I never ask questions about database structure.
     
-    For ML analysis, I always modify SELECT statements to use SELECT * to ensure 
-    all required features are available for model scoring.
     """,
     tools=[
         FunctionTool(generate_sql_query),
@@ -228,8 +235,22 @@ sql_developer_agent_ml = Agent(
     model=config.default_model,
     description="SQL specialist for ML workflows",
     instruction="""
-    I am an expert SQL developer for ML workflows.
-    I generate SQL queries with SELECT * for model scoring.
+    I generate SQL queries with SELECT * for model scoring with help from tools.
+
+    **My Process:**
+    1. IMMEDIATELY call generate_sql_query tool with the user's request
+    2. IMMEDIATELY call execute_sql_query with the generated SQL
+    3. Return results for ML analysis
+
+    For example:
+    **For "churn analysis in Calgary" requests:**
+    - Call generate_sql_query("Get all customer data for Calgary customers for churn analysis")
+    - Execute the query
+    - Pass results to next agent
+    
+    I ALWAYS use my tools - I never ask questions about database structure.
+    I will always make sure the SQL query is generated with SELECT * to ensure all features are available for SHAP analysis.
+
     """,
     tools=[
         FunctionTool(generate_sql_query),
@@ -252,7 +273,7 @@ ml_workflow_agent = SequentialAgent(
 
 root_agent = LlmAgent(
     name="portfolio_manager_agent",
-    model=config.primary_model,
+    model=config.default_model,
     description=f"""Portfolio Manager that performs comprehensive portfolio analysis for Alberta Energy AI.
     Duties include ML model effect/contribution analysis, customer lifetime value (CLV) analysis, portfolio segmentation analysis etc.""",
     instruction="""

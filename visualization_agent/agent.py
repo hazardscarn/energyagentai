@@ -21,6 +21,7 @@ from shared_tools.simple_sql_agents import (
 from google.adk.agents import LlmAgent, SequentialAgent
 from google.adk.code_executors import BuiltInCodeExecutor
 from google.adk.tools import FunctionTool, ToolContext
+from .subtools import clean_sql_response
 
 # Initialize SQL components
 initialize_sql_components()
@@ -35,14 +36,20 @@ def get_sql_data(user_request: str, tool_context: ToolContext) -> Dict[str, Any]
         print(f"🔍 Getting SQL data for: {user_request}")
         
         # Generate and execute SQL
-        sql_result = generate_sql_query_tool(user_request)
-        sql_data = json.loads(sql_result)
+        raw_sql_result = generate_sql_query_tool(user_request)
+
+        sql_data = json.loads(raw_sql_result)
         
         if not sql_data.get("success"):
             return {"success": False, "error": f"SQL generation failed: {sql_data.get('error')}"}
         
-        sql_query = sql_data.get("sql_query")
-        query_result = execute_query_json_tool(sql_query)
+
+        sql_result = clean_sql_response(raw_sql_result)
+        print(f"Debug: Raw SQL Result: {raw_sql_result}")
+        print(f"Debug: Cleaned SQL Result: {sql_result}")
+
+        # sql_query = sql_data.get("sql_query")
+        query_result = execute_query_json_tool(sql_result)
         query_data = json.loads(query_result)
         
         if not query_data.get("success"):
@@ -53,7 +60,7 @@ def get_sql_data(user_request: str, tool_context: ToolContext) -> Dict[str, Any]
             "data_rows": query_data.get("data", []),
             "columns": query_data.get("columns", []),
             "row_count": query_data.get("row_count", 0),
-            "sql_query": sql_query,
+            "sql_query": query_result,
             "user_request": user_request
         }
         
@@ -72,7 +79,7 @@ def get_sql_data(user_request: str, tool_context: ToolContext) -> Dict[str, Any]
 
 sql_data_agent = LlmAgent(
     name="sql_data_retrieval_agent",
-    model="gemini-2.5-pro-preview-05-06",
+    model="gemini-2.5-flash",
     description="Retrieves SQL data based on user requests",
     instruction="""You are a SQL Data Retrieval Specialist.
 
@@ -97,7 +104,7 @@ Provide clear feedback about the data retrieval process.""",
 
 visualization_generator = LlmAgent(
     name="intelligent_visualization_generator",
-    model="gemini-2.5-pro-preview-05-06",
+    model="gemini-2.5-flash",
     description="Creates intelligent Python visualization code by analyzing data and user requirements",
     instruction="""You are an expert data visualization developer with deep knowledge of Python, matplotlib, seaborn, and plotly.
 
