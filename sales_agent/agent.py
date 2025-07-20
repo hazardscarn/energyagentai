@@ -11,6 +11,7 @@ from google.adk.tools import FunctionTool
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from vertexai.preview.reasoning_engines import AdkApp
+from .subtools import clean_sql_response, is_valid_sql
 
 # Import shared tools
 from shared_tools.simple_sql_agents import (
@@ -34,23 +35,52 @@ config = salesConfig()
 # =============================================================================
 
 def extract_customer_data(customer_id: str) -> str:
-    """Extract customer data for sales analysis"""
+    """
+    Extract complete customer data for retention analysis.
+    
+    Args:
+        customer_id: Unique customer identifier
+        
+    Returns:
+        str: JSON string with customer data and metadata
+    """
     try:
-        query_description = f"Get complete customer profile for customer_id = '{customer_id}'"
-        sql_query_response = generate_sql_query_tool(query_description)
-        sql_query_json = json.loads(sql_query_response)
+        # Generate SQL query to get all customer data
+        query_description = f"""
+        Get complete customer profile for customer_id = '{customer_id}' including:
+        - Demographics (age, income, location)
+        - Account details (tenure, plan_type, monthly_usage)
+        - Satisfaction and engagement metrics
+        - Payment history and billing info
+        - All columns needed for ML model analysis
+        Use SELECT * to ensure all features are available for SHAP analysis
+
+        IMPORTANT: Return only SQL code, not JSON or formatted text.
+        """
         
-        if sql_query_json.get("success", False):
-            actual_sql_query = sql_query_json.get("sql_query", "")
-        else:
-            actual_sql_query = f"SELECT * FROM `energyagentai.alberta_energy_ai.customer_base` WHERE customer_id = '{customer_id}'"
+        # sql_query = generate_sql_query_tool(query_description)
+        raw_sql_response = generate_sql_query_tool(query_description)
+
+        # Clean and validate the SQL response for Flash models
+        sql_query = clean_sql_response(raw_sql_response)
         
-        result = execute_query_dataframe_tool(actual_sql_query)
+        # Debug logging to see what we got
+        print(f"🔍 Debug - Raw SQL response: {raw_sql_response}")
+        print(f"🔍 Debug - Cleaned SQL: {sql_query}")
+
+        # Validate SQL before executing
+        if not is_valid_sql(sql_query):
+            # Fallback to a simple, direct query
+            sql_query = f"SELECT * FROM `energyagentai.alberta_energy_ai.customer_base` WHERE customer_id = '{customer_id}'"
+            print(f"⚠️  Using fallback SQL: {sql_query}")
+
+        # Execute the query
+        result = execute_query_dataframe_tool(sql_query)
         
         return json.dumps({
             "success": True,
             "customer_id": customer_id,
-            "sql_query": actual_sql_query,
+            "sql_query": sql_query,
             "customer_data": result,
             "message": "Customer data extracted successfully"
         }, indent=2)
@@ -59,8 +89,38 @@ def extract_customer_data(customer_id: str) -> str:
         return json.dumps({
             "success": False,
             "customer_id": customer_id,
-            "error": str(e)
+            "error": str(e),
+            "error_type": type(e).__name__
         }, indent=2)
+
+# def extract_customer_data(customer_id: str) -> str:
+#     """Extract customer data for sales analysis"""
+#     try:
+#         query_description = f"Get complete customer profile for customer_id = '{customer_id}'"
+#         sql_query_response = generate_sql_query_tool(query_description)
+#         sql_query_json = json.loads(sql_query_response)
+        
+#         if sql_query_json.get("success", False):
+#             actual_sql_query = sql_query_json.get("sql_query", "")
+#         else:
+#             actual_sql_query = f"SELECT * FROM `energyagentai.alberta_energy_ai.customer_base` WHERE customer_id = '{customer_id}'"
+        
+#         result = execute_query_dataframe_tool(actual_sql_query)
+        
+#         return json.dumps({
+#             "success": True,
+#             "customer_id": customer_id,
+#             "sql_query": actual_sql_query,
+#             "customer_data": result,
+#             "message": "Customer data extracted successfully"
+#         }, indent=2)
+        
+#     except Exception as e:
+#         return json.dumps({
+#             "success": False,
+#             "customer_id": customer_id,
+#             "error": str(e)
+#         }, indent=2)
 
 def identify_sales_opportunities(customer_id: str) -> str:
     """Identify top 2 products for upsell/cross-sell"""
@@ -158,7 +218,7 @@ def analyze_sales_preventing_factors(customer_id: str, sql_query: str, product_m
 
 root_agent = Agent(
     name="sales_assistant_agent",
-    model=config.primary_model,
+    model=config.default_model,
     description="Sales Assistant Agent for personalized sales campaigns",
     instruction="""
     I am the Sales Assistant Agent. I help create personalized sales campaigns.

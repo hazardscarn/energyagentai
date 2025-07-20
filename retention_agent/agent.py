@@ -18,6 +18,7 @@ from google.adk.tools import FunctionTool
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from vertexai.preview.reasoning_engines import AdkApp
+from .subtools import clean_sql_response,is_valid_sql
 
 # Import shared tools (assuming they exist in the shared_tools folder)
 from shared_tools.simple_sql_agents import (
@@ -63,10 +64,26 @@ def extract_customer_data(customer_id: str) -> str:
         - Payment history and billing info
         - All columns needed for ML model analysis
         Use SELECT * to ensure all features are available for SHAP analysis
+
+        IMPORTANT: Return only SQL code, not JSON or formatted text.
         """
         
-        sql_query = generate_sql_query_tool(query_description)
+        # sql_query = generate_sql_query_tool(query_description)
+        raw_sql_response = generate_sql_query_tool(query_description)
+
+        # Clean and validate the SQL response for Flash models
+        sql_query = clean_sql_response(raw_sql_response)
         
+        # Debug logging to see what we got
+        print(f"🔍 Debug - Raw SQL response: {raw_sql_response}")
+        print(f"🔍 Debug - Cleaned SQL: {sql_query}")
+
+        # Validate SQL before executing
+        if not is_valid_sql(sql_query):
+            # Fallback to a simple, direct query
+            sql_query = f"SELECT * FROM `energyagentai.alberta_energy_ai.customer_base` WHERE customer_id = '{customer_id}'"
+            print(f"⚠️  Using fallback SQL: {sql_query}")
+
         # Execute the query
         result = execute_query_dataframe_tool(sql_query)
         
@@ -239,7 +256,7 @@ def generate_personalized_call_script(
 # Root agent that handles all retention requests
 root_agent = Agent(
     name="retention_agent",
-    model=config.primary_model,
+    model=config.default_model,
     description="Retention Agent that creates personalized retention campaigns for individual customers",
     instruction="""
     I am the Retention Agent that creates personalized retention campaigns automatically.

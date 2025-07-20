@@ -31,7 +31,7 @@ class SQLQueryDeveloper:
         self.dataset_name = dataset_name
         self.client = bigquery.Client(project=project_id)
         self.embedding_model = TextEmbeddingModel.from_pretrained('text-embedding-005')
-        self.llm = GenerativeModel("gemini-2.0-flash")
+        self.llm = GenerativeModel("gemini-2.5-flash")
     
     def get_embedding(self, text: str):
         """Generate embedding for text"""
@@ -146,6 +146,7 @@ REQUIREMENTS:
 - Use the full table path format: `energyagentai.alberta_energy_ai.table_name`
 - Make sure when you filter for categrical columns, you convert them to lower case using LOWER(column_name) = 'value' for case-insensitive matching
 - Be aware of the case sensitivity of BigQuery, especially for string comparisons
+- DO NOT add unnecessary formatting like triple backticks or SQL tags
 
 AVAILABLE TABLES:
 {table_info}

@@ -291,7 +291,7 @@ Make the email feel genuinely personal and data-informed, not generic.
 """
         
         # Generate email using Gemini
-        model = GenerativeModel(config.primary_model)
+        model = GenerativeModel(config.default_model)
         response = model.generate_content(prompt)
         
         # Build header
@@ -432,7 +432,7 @@ Make every recommendation explainable through the SHAP factor analysis.
 """
         
         # Generate call script using Gemini
-        model = GenerativeModel(config.primary_model)
+        model = GenerativeModel(config.default_model)
         response = model.generate_content(prompt)
         
         # Build header
