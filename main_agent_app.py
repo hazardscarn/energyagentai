@@ -1102,6 +1102,18 @@ def main():
     Separate Google ADK multi-agent system for generating professional marketing campaigns
     
     One stop shop to understand who your customers are, what they need, how to deliver it, and how to keep them happy!
+    
+    """)
+
+    # Creator information
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("""
+    ### 👨‍💻 Created By
+    
+    **David Babu**  
+    [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/david-babu-15047096/)
+    
+    *Powered by Google ADK Agents*
     """)
     
     # Run selected page
