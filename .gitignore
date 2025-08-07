@@ -24,3 +24,8 @@ test_scrape.py
 images_backup
 app.py
 agents_architecture_diagram.zip
+test_audio_output
+audio_output
+prevapp.py
+sessions.db
+model_stats.txt

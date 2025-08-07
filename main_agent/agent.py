@@ -17,6 +17,10 @@ from sales_agent.agent import root_agent as sales_agent
 from retention_agent.agent import root_agent as retention_agent
 from portfolio_manager.agent import root_agent as portfolio_manager_agent
 
+from .config import Config
+config=Config()
+
+
 # Create AgentTools - NO DESCRIPTION PARAMETER!
 energy_tool = AgentTool(agent=energy_efficiency_agent)
 sales_tool = AgentTool(agent=sales_agent)
@@ -27,16 +31,16 @@ portfolio_tool = AgentTool(agent=portfolio_manager_agent)
 # Enhanced Main Coordinator Agent
 main_coordinator = Agent(
     name="WattsWise_AI",
-    model="gemini-2.5-flash",
+    model=config.default_model,
     description="Main interface for Alberta Energy AI system - coordinates all energy, sales, and visualization tasks",
     
     instruction="""You are the main coordinator for Alberta Energy AI system. You have access to three specialized agents:
 
     **Energy Efficiency Specialist**: For energy analysis, TOU plans, usage patterns, efficiency recommendations
-    **Sales Specialist**: For creating personalized sales emails or call scripts for upsell/crosssell opportunities  
+    **Sales Specialist**: For creating personalized sales emails or call scripts or audio sales call pitch for upsell/crosssell opportunities  
     **Visualization Specialist**: For creating charts, graphs, and visual analytics
     **Retention Agent: For creating personalized customer retention email or call scripts
-    **Portfolio Manager Agent**: For portfolio level analysis and insights
+    **Portfolio Manager Agent**: For portfolio level analysis and insights & to handle simple data questions from user
 
     **Your Role:**
     - Understand what the user wants to accomplish
@@ -51,6 +55,8 @@ main_coordinator = Agent(
     - Personalized retention requests (emails, call scripts) → Retention Agent
     - Portfolio level analysis and insights → Portfolio Manager Agent
     - Portfolio level/subset of customer level analysis → Portfolio Manager Agent
+    - General questions about the portfolio → Portfolio Manager Agent [ eg: How many customers are there in Calgray? Give a list of 10 customers etc.]
+
     - To understand the reasons/patterns behind sales or churn for a subset or a portfolio use Portfolio Manager Agent
 
     **CRITICAL Response Guidelines:**

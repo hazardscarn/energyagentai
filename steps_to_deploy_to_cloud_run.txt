@@ -1,0 +1,57 @@
+# Login to Google Cloud
+gcloud auth login
+
+# Set your project ID
+gcloud config set project YOUR_PROJECT_ID
+
+cloud config get-value project
+
+# Enable required APIs
+gcloud services enable run.googleapis.com
+gcloud services enable cloudbuild.googleapis.com
+gcloud services enable aiplatform.googleapis.com
+
+
+# Set these for easier deployment
+export GOOGLE_CLOUD_PROJECT="project-name"
+export GOOGLE_CLOUD_LOCATION="us-central1"  # or your preferred region
+
+# Check if gcloud is working
+gcloud version
+
+# Check if you're authenticated
+gcloud auth list
+
+# Check current project
+gcloud config get-value project
+
+
+
+
+ Deploy directly with gcloud
+# Navigate to your project directory (if not already there)
+
+
+# Deploy to Cloud Run using your settings
+gcloud run deploy AGENT-NAME `
+  --source . `
+  --region $env:GOOGLE_CLOUD_LOCATION `
+  --project $env:GOOGLE_CLOUD_PROJECT `
+  --allow-unauthenticated `
+  --set-env-vars="GOOGLE_CLOUD_PROJECT=$env:GOOGLE_CLOUD_PROJECT,GOOGLE_CLOUD_LOCATION=$env:GOOGLE_CLOUD_LOCATION,GOOGLE_GENAI_USE_VERTEXAI=TRUE" `
+  --memory=2Gi `
+  --cpu=1 `
+  --timeout=300
+
+#Alternative - Single Command with Your Values
+# Balanced approach - start here
+gcloud run deploy AGENT-NAME `
+  --source . `
+  --region us-central1 `
+  --project project-name`
+  --allow-unauthenticated `
+  --set-env-vars="GOOGLE_CLOUD_PROJECT=energyagentai,GOOGLE_CLOUD_LOCATION=us-central1,GOOGLE_GENAI_USE_VERTEXAI=TRUE" `
+  --memory=4Gi `
+  --cpu=2 `
+  --timeout=900 `
+  --concurrency=5

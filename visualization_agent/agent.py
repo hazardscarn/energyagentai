@@ -1,236 +1,149 @@
 """
-Truly Dynamic Alberta Energy AI Visualization Agent - agent.py
-Multi-Agent Architecture - Each agent with single tool type
+Enhanced Alberta Energy AI Visualization Agent - agent.py
+Clean Multi-Agent Architecture with Artifact-Based Data Flow
 """
 
-import sys
-import os
-import json
-import pandas as pd
-from pathlib import Path
-from typing import Dict, Any, List
-
-# Import SQL tools
-from shared_tools.simple_sql_agents import (
-    generate_sql_query_tool,
-    execute_query_json_tool,
-    initialize_sql_components
-)
-
-# ADK imports
+from typing import Dict, Any
 from google.adk.agents import LlmAgent, SequentialAgent
-from google.adk.code_executors import BuiltInCodeExecutor
-from google.adk.tools import FunctionTool, ToolContext
-from .subtools import clean_sql_response
+from google.adk.tools import FunctionTool
+import asyncio
 
-# Initialize SQL components
-initialize_sql_components()
-
-# =============================================================================
-# SQL DATA TOOL
-# =============================================================================
-
-def get_sql_data(user_request: str, tool_context: ToolContext) -> Dict[str, Any]:
-    """Get SQL data and store in state for agents"""
-    try:
-        print(f"🔍 Getting SQL data for: {user_request}")
-        
-        # Generate and execute SQL
-        raw_sql_result = generate_sql_query_tool(user_request)
-
-        sql_data = json.loads(raw_sql_result)
-        
-        if not sql_data.get("success"):
-            return {"success": False, "error": f"SQL generation failed: {sql_data.get('error')}"}
-        
-
-        sql_result = clean_sql_response(raw_sql_result)
-        print(f"Debug: Raw SQL Result: {raw_sql_result}")
-        print(f"Debug: Cleaned SQL Result: {sql_result}")
-
-        # sql_query = sql_data.get("sql_query")
-        query_result = execute_query_json_tool(sql_result)
-        query_data = json.loads(query_result)
-        
-        if not query_data.get("success"):
-            return {"success": False, "error": f"Query execution failed: {query_data.get('error')}"}
-        
-        # Store complete data in state for agents
-        tool_context.state['sql_data'] = {
-            "data_rows": query_data.get("data", []),
-            "columns": query_data.get("columns", []),
-            "row_count": query_data.get("row_count", 0),
-            "sql_query": query_result,
-            "user_request": user_request
-        }
-        
-        return {
-            "success": True,
-            "message": f"Retrieved {query_data.get('row_count', 0)} rows with {len(query_data.get('columns', []))} columns",
-            "data_preview": query_data.get("data", [])[:3]  # Show first 3 rows for context
-        }
-        
-    except Exception as e:
-        return {"success": False, "error": str(e)}
+# Import centralized tools
+from .tools import (
+    get_sql_query,
+    create_viz_code_from_query,
+    execute_code_and_save_plots
+)
+from .config import vizConfig
+config = vizConfig()
 
 # =============================================================================
-# AGENT 1: SQL DATA RETRIEVAL AGENT (TOOLS ONLY)
+# AGENT 1: SQL DATA RETRIEVAL AGENT
 # =============================================================================
 
 sql_data_agent = LlmAgent(
     name="sql_data_retrieval_agent",
-    model="gemini-2.5-flash",
-    description="Retrieves SQL data based on user requests",
+    model=config.default_model,
+    description="Retrieves SQL data and saves as artifacts for visualization pipeline",
     instruction="""You are a SQL Data Retrieval Specialist.
 
 Your job is to:
-1. Take the user's natural language request
-2. Use the get_sql_data tool to retrieve relevant data
-3. Store the data in session state for other agents
+1. Take the user's natural language request for data
+2. Use the get_sql_data_and_save_artifact tool to:
+   - Generate appropriate SQL query
+   - Execute the query against the database
+   - Save the retrieved data as an artifact
+   - Store metadata in session state for the next agent
 
-Always use the get_sql_data tool with the user's original request.
-Provide clear feedback about the data retrieval process.""",
+The tool will automatically:
+- Generate SQL from natural language
+- Execute the query safely
+- Save data as a JSON artifact with timestamp
+- Store minimal metadata (filename, SQL query, row count) in state
+
+Always use the tool with the user's original data request.
+Provide clear feedback about data retrieval and artifact creation.
+
+Example responses:
+- "Retrieved 150 rows of energy production data and saved as artifact sql_data_20250806_143022.json"
+- "Found 85 renewable energy facilities matching your criteria, data ready for visualization"
+""",
     
-    # Only SQL tool - single tool type
-    tools=[FunctionTool(get_sql_data)],
-    
-    # Store result for next agent
+    tools=[FunctionTool(get_sql_query)],
     output_key="sql_retrieval_result"
 )
 
 # =============================================================================
-# AGENT 2: INTELLIGENT VISUALIZATION GENERATOR (PURE AI)
+# AGENT 2: VISUALIZATION CODE GENERATOR AGENT
 # =============================================================================
 
 visualization_generator = LlmAgent(
     name="intelligent_visualization_generator",
-    model="gemini-2.5-flash",
-    description="Creates intelligent Python visualization code by analyzing data and user requirements",
-    instruction="""You are an expert data visualization developer with deep knowledge of Python, matplotlib, seaborn, and plotly.
+    model=config.default_model,
+    description="Loads data artifacts and generates optimal Python visualization code using LLM",
+    instruction="""You are an expert Data Visualization Code Generator.
 
-Your job is to analyze the data in state['sql_data'] and the user's request, then generate complete, executable Python visualization code.
-MAKE SURE YOU ONLY GENERATE CODE AS OUTPUT AND NOTHING ELSE.
-NO EXPLANATIONS, NO TEXT, JUST EXECUTABLE PYTHON CODE.
+Your job is to:
+1. Understand the user's visualization requirements
+2. Use the create_viz_code_from_query tool which will:
+    - Load the data from sql query saved in session state
+    - Analyze the data structure (columns, types, sample rows)
+    - Make an intelligent LLM call to generate appropriate visualization code
+    - Consider the user's specific visualization request
+    - Store the generated code in session state abd return a message of success or failure
 
-CRITICAL REQUIREMENT - SELF-CONTAINED CODE:
-- The generated code MUST be completely self-contained and executable
-- Include the ACTUAL data from state['sql_data']['data_rows'] directly in the code as hardcoded data
-- Do NOT use state['sql_data'] in the generated code output
-- Create the DataFrame directly from hardcoded data_rows list
 
-ANALYZE THE DATA INTELLIGENTLY:
-1. **Data Structure**: Look at columns, data types, row count from state['sql_data']
-2. **Data Patterns**: Understand what the data represents  
-3. **User Intent**: Parse what visualization they actually want
-4. **Best Practices**: Choose optimal chart types for the data
+Always use the tool with the user's visualization requirements.
+The tool uses advanced prompt engineering to ensure the LLM generates high-quality, executable code.
 
-GENERATE SMART CODE STRUCTURE:
-
-    import pandas as pd
-    import matplotlib.pyplot as plt
-    import seaborn as sns
-    import numpy as np
-
-    # Data from SQL query (embed actual data here)
-    data_rows = [
-        {'column1': actual_value1, 'column2': actual_value2},
-        {'column1': actual_value3, 'column2': actual_value4},
-        # Include ALL actual rows from state['sql_data']['data_rows']
-    ]
-
-    # Create DataFrame
-    df = pd.DataFrame(data_rows)
-
-    # Your intelligent visualization code here
-    plt.show()
-
-EXAMPLES OF INTELLIGENT DECISIONS:
-
-Single row with multiple numeric columns → Bar chart of columns
-Time series data → Line charts with trends
-Categorical vs numeric → Grouped bar charts or box plots
-Distribution requests → Histograms or density plots
-Comparison requests → Side-by-side charts
-
-OUTPUT REQUIREMENTS:
-
-*Generate ONLY complete, executable Python code
-*Start with necessary imports
-*Include the ACTUAL data from state['sql_data']['data_rows'] as hardcoded data_rows = [...]
-*Create DataFrame from the hardcoded data: df = pd.DataFrame(data_rows)
-*Add appropriate visualizations with professional styling
-*Include insights and statistics
-*End with plt.show()
-*NO explanations, NO text, JUST EXECUTABLE PYTHON CODE
-*NO state access in generated code - everything self-contained
-
-*MAKE SURE YOU ONLY GENERATE CODE AS OUTPUT AND NOTHING ELSE.
-*NO EXPLANATIONS, NO TEXT, JUST EXECUTABLE PYTHON CODE.
-
-THE CODE MUST BE SELF-CONTAINED WITH HARDCODED DATA FROM state['sql_data']['data_rows'].
-Be intelligent about chart selection - analyze the actual data and request to create the perfect visualization.""",
-# No tools - pure AI intelligence
-output_key="generated_code"
+""",
+    
+    tools=[FunctionTool(create_viz_code_from_query)]
 )
 
-
-
 # =============================================================================
-# AGENT 3: CODE EXECUTION AGENT (CODE EXECUTOR ONLY)
+# AGENT 3: CODE EXECUTION AGENT
 # =============================================================================
 
-# code_executor_agent = LlmAgent(
-#     name="code_execution_agent",
-#     model="gemini-2.5-pro-preview-05-06",
-#     description="Executes Python visualization code generated by other agents",
-#     instruction="""You are a Python Code Execution Specialist.
+code_executor_agent = LlmAgent(
+    name="code_execution_agent",
+    model=config.default_model,
+    description="Executes Python visualization code and saves plots as artifacts",
+    instruction="""You are a Python Code Execution Specialist.
 
-# Your job is to:
-# 1. Take the Python code from state['generated_code']
-# 2. Execute it using your code execution capability
-# 3. Handle any execution errors gracefully
+Your job is to:
+1. Take the generated Python code from session state
+2. Use the execute_code_and_save_plots tool to:
+   - Execute the visualization code safely
+   - Capture any generated matplotlib/seaborn plots
+   - Save plots as PNG artifacts with high quality
+   - Provide execution feedback and artifact information
 
-# Always execute the code that was generated by the visualization agent.
-# If there are errors, report them clearly.""",
+The tool will automatically:
+- Execute code in a controlled environment
+- Configure matplotlib for headless operation
+- Detect and save all generated figures
+- Create timestamped PNG artifacts
+- Store artifact metadata in session state
+- Handle any execution errors gracefully
+
+Always use the tool to execute the code generated by the previous agent.
+Provide clear feedback about execution status and saved artifacts.
+
+Example responses:
+- "Successfully executed code and saved 2 visualization artifacts: bar_chart_20250806_143045.png and trend_analysis_20250806_143045.png"
+- "Code executed successfully - created interactive energy dashboard saved as visualization_20250806_143045.png"
+- "Execution completed with 1 high-resolution plot artifact ready for download"
+""",
     
-#     # Only code executor - single capability type
-#     code_executor=BuiltInCodeExecutor(),
-    
-#     output_key="execution_result"
-# )
+    tools=[FunctionTool(execute_code_and_save_plots)],
+    output_key="execution_result"
+)
 
 # =============================================================================
-# ROOT COORDINATOR: SEQUENTIAL AGENT (CLEAN & EFFICIENT)
+# ROOT COORDINATOR AGENT
 # =============================================================================
 
 root_agent = SequentialAgent(
     name="alberta_energy_viz_coordinator",
-    description="Coordinates the complete visualization workflow using specialized agents",
-    
-    # Sequential execution: SQL → Visualization → Execution
+    description="Enhanced SQL → Artifact → Code Generation → Execution Pipeline",
     sub_agents=[
-        sql_data_agent,           # Retrieves data using SQL tools
-        visualization_generator,   # Generates intelligent code (pure AI)
+        sql_data_agent,
+        visualization_generator, 
+        code_executor_agent
     ]
 )
 
-__version__ = "4.0.0"
-__author__ = "Alberta Energy AI Team"
-__description__ = "Multi-agent architecture - clean sequential coordination"
+# =============================================================================
+# VERSION INFO
+# =============================================================================
+
+__version__ = "6.0.0"
+__description__ = "Enhanced multi-agent system with artifact-based data flow and LLM-powered code generation"
 
 __all__ = [
     "root_agent",
-    "sql_data_agent",
-    "visualization_generator", 
+    "sql_data_agent", 
+    "visualization_generator",
     "code_executor_agent"
 ]
-
-if __name__ == "__main__":
-    print("🚀 Intelligent Alberta Energy AI Visualization Agent")
-    print("=" * 60)
-    print("✅ Multi-Agent Architecture")
-    print("✅ Each agent has single tool type (ADK compatible)")
-    print("✅ True AI intelligence for visualization")
-    print("✅ No hardcoded plot functions")
-    print("✅ SQL → AI Analysis → Code Generation → Execution")
-    print("✅ Ready for any visualization request!")
