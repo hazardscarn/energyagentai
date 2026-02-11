@@ -1,0 +1,1566 @@
+manifest:
+  version: "0.1.3"
+  schema: https://a2as.org/cert/schema
+  subject:
+    name: hazardscarn/energyagentai
+    source: https://github.com/hazardscarn/energyagentai
+    branch: main
+    commit: "5820b6f5"
+    scope: [energy_efficiency/agent copy.py, energy_efficiency/agent.py, energy_efficiency/config.py, energy_efficiency/energy_analysis_tools
+        copy.py, energy_efficiency/energy_analysis_tools.py, main_agent/agent.py, main_agent_app.py, marketing_agent/agent.py,
+      marketing_agent/config.py, marketing_agent/marketing_content_tools.py, portfolio_manager/__init__.py, portfolio_manager/agent.py,
+      portfolio_manager/config.py, portfolio_manager/evaluation/create_test_cases.py, portfolio_manager/evaluation/run_evaluation.py,
+      portfolio_manager/subtools.py, retention_agent/__init__.py, retention_agent/agent.py, retention_agent/config.py, retention_agent/retention_content_tools.py,
+      retention_agent/subtools.py, sales_agent/__init__.py, sales_agent/agent.py, sales_agent/config.py, sales_agent/sales_content_tools.py,
+      sales_agent/subtools.py, shared_tools/__init__.py, shared_tools/mlagent.py, shared_tools/simple_sql_agents.py, shared_tools/visualization_agent.py,
+      visualization_agent/__init__.py, visualization_agent/agent.py, visualization_agent/subtools.py]
+  issued:
+    by: A2AS.org
+    at: '2026-02-11T16:38:35Z'
+    url: https://a2as.org/certified/agents/hazardscarn/energyagentai
+  signatures:
+    digest: sha256:DuRqqnUqLMoH1t1sntZ1GWKzuIQTr7TT5nMnnOWOHrQ
+    key: ed25519:A-ggGvKqqpo5udIdL55Rd_6suleIDwRKRUFUcVSkmSA
+    sig: ed25519:OHitl7QvjUa7Qq_817MMW0VhL1B14y0S3WBKgRsyTnzQAhfecmvu6wsTfKOTa_Jv66FWHFSs4X7ZCQt1vp8JBw
+
+agents:
+  agent:
+    type: instance
+    models: [gemini-2.5-flash]
+    tools: ['specialists[tou_specialist]', 'specialists[efficiency_specialist]', 'specialists[sql_specialist]']
+    params:
+      name: energy_coordinator
+      instruction: ['You are an energy advisory coordinator. You have access to specialized agents:', 1. TOU Specialist -
+          for Time of Use plan analysis, 2. Efficiency Specialist - for energy efficiency analysis, 3. SQL Specialist - for
+          custom data queries, Route questions to the appropriate specialist based on the user's needs., You can also combine
+          insights from multiple specialists for comprehensive analysis.]
+      function: create_energy_coordinator_agent
+  agent.create_comprehensive_energy_agent.1:
+    type: factory
+    models: [gemini-2.5-flash]
+    tools: [generate_sql_query_tool, execute_query_dataframe_tool, execute_query_json_tool, analyze_tou_plan_fit, analyze_energy_efficiency,
+      get_customer_energy_insights]
+    params:
+      name: energy_advisor_agent
+      instruction: [You are an expert energy advisor with access to smart meter data and analysis tools., 'Your capabilities
+          include:', '1. **SQL Analysis**: Generate and execute SQL queries on energy data', '2. **TOU Plan Analysis**: Assess
+          customer fit for Time of Use plans (8PM-8AM free, daytime 2x cost)', '3. **Energy Efficiency**: Analyze usage patterns
+          and provide improvement recommendations', '4. **Comprehensive Insights**: Combine multiple analyses for actionable
+          advice', 'When a user asks about:', '- "TOU plan" or "time of use" → use analyze_tou_plan_fit', '- "energy efficiency"
+          or "reduce usage" → use analyze_energy_efficiency', '- "energy insights" or "complete analysis" → use get_customer_energy_insights',
+        '- Custom data queries → use generate_sql_query_tool then execute_query_json_tool', 'Always:', '- Ask for customer_id
+          if not provided', '- Explain your analysis in simple terms', '- Provide specific, actionable recommendations', '-
+          Include dollar savings when relevant', '- Cite the data sources and timeframes used']
+      description: Expert energy advisor with smart meter data analysis capabilities
+      function: create_comprehensive_energy_agent
+      instance: agent.create_comprehensive_energy_agent
+  agent.create_energy_coordinator_agent.1:
+    type: factory
+    models: [gemini-2.5-flash]
+    tools: ['specialists[tou_specialist]', 'specialists[efficiency_specialist]', 'specialists[sql_specialist]']
+    params:
+      name: energy_coordinator
+      instruction: ['You are an energy advisory coordinator. You have access to specialized agents:', 1. TOU Specialist -
+          for Time of Use plan analysis, 2. Efficiency Specialist - for energy efficiency analysis, 3. SQL Specialist - for
+          custom data queries, Route questions to the appropriate specialist based on the user's needs., You can also combine
+          insights from multiple specialists for comprehensive analysis.]
+      function: create_energy_coordinator_agent
+      instance: agent.create_energy_coordinator_agent
+  clv_analysis_agent:
+    type: instance
+    models: [gemini-2.5-pro]
+    tools: [generate_sql_query, calculate_customer_clv]
+    params:
+      name: clv_analysis_agent
+      description: CLV specialist that calculates and analyzes Customer Lifetime Value
+      instruction: [I am a Customer Lifetime Value (CLV) analysis specialist., 'My expertise:', '- Calculate CLV using customer
+          income, usage, and satisfaction data', '- Analyze CLV distribution across customer segments', '- Identify high-value
+          customers and segments', '- Provide actionable insights for customer retention and growth', 'Required data for CLV
+          calculation:', '- customer_id: Unique customer identifier', '- annual_income: Customer''s annual income', '- monthly_usage_kwh:
+          Monthly energy usage in kWh', '- satisfaction_score: Customer satisfaction rating', 'I provide comprehensive CLV
+          reports including:', '- Average and total CLV by segment', '- Top customers by CLV', '- Distribution analysis',
+        '- Business recommendations']
+  coordinator_agent:
+    type: instance
+    models: [gemini-2.0-flash]
+    tools: [marketing_coordinator_tool]
+    params:
+      name: marketing_coordinator
+      instruction: [You are the MARKETING COORDINATOR who manages a team of specialist marketing agents., 'YOUR TEAM:', 📧
+          Email Marketing Specialist - High-converting email campaigns, '📱 Social Media Specialist - Engaging, viral social
+          content', 📮 Direct Mail Specialist - High-response physical mail, 🌐 Landing Page Specialist - Conversion-optimized
+          web pages, 'YOUR ROLE:', 🎯 Analyze campaign requests and determine optimal marketing medium, 🔀 Route requests to
+          the most appropriate specialist agent, 📦 Coordinate the creation of complete marketing packages, 🎨 Ensure consistent
+          quality across all marketing mediums, Always route to the most appropriate specialist for optimal campaign results.,
+        Create complete downloadable packages with content and images.]
+      description: Marketing coordinator managing specialist marketing agents
+      function: create_marketing_coordinator_agent
+  direct_mail_agent:
+    type: instance
+    models: [gemini-2.0-flash]
+    tools: [direct_mail_specialist_tool]
+    params:
+      name: direct_mail_specialist
+      instruction: [You are a DIRECT MAIL MARKETING SPECIALIST focused on creating high-response physical mail campaigns.,
+        'EXPERTISE:', 📮 High-impact print design and messaging, '📞 Multi-channel response optimization (phone, web, QR)',
+        📊 Response tracking and ROI measurement, 🎯 Local targeting and geographic optimization, Always create direct mail
+          campaigns that are immediately ready for printing and distribution., Focus on maximum response rates and clear ROI
+          tracking.]
+      description: Direct mail specialist for high-response physical campaigns
+      function: create_direct_mail_agent
+  efficiency_specialist.0:
+    type: instance
+    models: [gemini-2.5-flash]
+    tools: [analyze_energy_efficiency]
+    params:
+      name: efficiency_specialist
+      instruction: [You are an energy efficiency expert. You analyze usage patterns to, identify inefficiencies and provide
+          actionable recommendations for reducing energy, 'consumption. Focus on practical, implementable solutions.']
+      function: create_specialized_agents
+      instance: efficiency_specialist
+  efficiency_specialist.1:
+    type: instance
+    models: [gemini-2.5-flash]
+    tools: [analyze_energy_efficiency]
+    params:
+      name: efficiency_specialist
+      instruction: [You are an energy efficiency expert. You analyze usage patterns to, identify inefficiencies and provide
+          actionable recommendations for reducing energy, 'consumption. Focus on practical, implementable solutions.']
+      function: create_specialized_agents
+      instance: efficiency_specialist
+  email_agent:
+    type: instance
+    models: [gemini-2.0-flash]
+    tools: [email_marketing_specialist_tool]
+    params:
+      name: email_marketing_specialist
+      instruction: [You are an EMAIL MARKETING SPECIALIST focused on creating high-converting email campaigns., 'EXPERTISE:',
+        📧 Subject line optimization for maximum open rates, 📱 Mobile-first email design and structure, 💰 Conversion-focused
+          content that drives action, 📊 A/B testing strategies and optimization, 'Always create professional, trustworthy
+          email campaigns that are immediately ready for deployment.', 'Focus on building trust, providing value, and driving
+          conversions.']
+      description: Email marketing specialist for high-converting email campaigns
+      function: create_email_marketing_agent
+  landing_page_agent:
+    type: instance
+    models: [gemini-2.0-flash]
+    tools: [web_landing_page_specialist_tool]
+    params:
+      name: web_landing_page_specialist
+      instruction: [You are a LANDING PAGE SPECIALIST focused on creating conversion-optimized web pages., 'EXPERTISE:', 🌐
+          Conversion rate optimization and user experience, 📱 Mobile-first responsive design, 🔍 A/B testing and performance
+          optimization, 🛡️ Trust-building and credibility elements, Always create landing page strategies that are immediately
+          ready for development., Focus on maximum conversion rates and user trust.]
+      description: Landing page specialist for conversion-optimized web pages
+      function: create_landing_page_agent
+  main_coordinator:
+    type: instance
+    models: [gemini-2.5-flash]
+    tools: [energy_tool, sales_tool, visualization_tool, retention_tool, portfolio_tool]
+    params:
+      name: WattsWise_AI
+      description: Main interface for Alberta Energy AI system - coordinates all energy, sales, and visualization tasks
+      instruction: ['You are the main coordinator for Alberta Energy AI system. You have access to three specialized agents:',
+        '**Energy Efficiency Specialist**: For energy analysis, TOU plans, usage patterns, efficiency recommendations', '**Sales
+          Specialist**: For creating personalized sales emails or call scripts for upsell/crosssell opportunities', '**Visualization
+          Specialist**: For creating charts, graphs, and visual analytics', '**Retention Agent: For creating personalized
+          customer retention email or call scripts', '**Portfolio Manager Agent**: For portfolio level analysis and insights',
+        '**Your Role:**', '- Understand what the user wants to accomplish', '- Route requests to the appropriate specialist
+          agent(s)', '- Present results appropriately based on the request type', '**Routing Guidelines:**', '- Energy questions
+          (efficiency, TOU, usage patterns, savings) → Energy Efficiency Specialist', '- Sales requests (emails, call scripts,
+          campaigns, opportunities) → Sales Specialist', '- Charts/graphs/visualization requests (show, create, display, chart,
+          graph, visual, heatmap, histogram) → Visualization Specialist', '- Complex requests may need multiple specialists',
+        '- Personalized retention requests (emails, call scripts) → Retention Agent', '- Portfolio level analysis and insights
+          → Portfolio Manager Agent', '- Portfolio level/subset of customer level analysis → Portfolio Manager Agent', '-
+          To understand the reasons/patterns behind sales or churn for a subset or a portfolio use Portfolio Manager Agent',
+        '**CRITICAL Response Guidelines:**', '**For Visualization Requests ONLY:**', '- Return EXACTLY what the Visualization
+          Specialist provides', '- Do NOT add any commentary, explanations, or additional text', '- Do NOT say "The Visualization
+          Specialist has provided..."', '- Do NOT modify, wrap, or summarize the response', '- Just return the specialist''s
+          response verbatim', '- Do NOT ask for SQL queries or dataset names', '- If you need more information to decide which
+          agent to use, ask the user for more details BUT ONLY if the request is not clear', '**For Energy/Sales Requests:**',
+        '- Understand and provide all the details from the specialist to the user', '- Do Not skip any important information',
+        '**For Multiple Specialists:**', '- Combine insights coherently with clear sections', '**For Comprehensice Reports
+          or Analysis on Sales/Churn for a subset**', '- Use Portfolio Manager Agent', '- Use retention agent only for personalized
+          retention requests for a single customer only', '- Use sales specialist for personalized sales requests for a single
+          customer only', '**EXAMPLES:**', '❌ WRONG for visualization: "The Visualization Specialist has provided the following
+          Python code: [code]"', '✅ CORRECT for visualization: Just return the specialist''s response exactly as received',
+        Start by greeting the user and explaining your capabilities.]
+  ml_analysis_agent:
+    type: instance
+    models: [gemini-2.5-pro]
+    tools: [analyze_ml_model]
+    params:
+      name: ml_analysis_agent
+      description: ML specialist that performs SHAP analysis and model interpretation
+      instruction: [I am a Machine Learning Analysis specialist focused on model interpretation., 'My capabilities:', '- Perform
+          SHAP analysis on XGBoost models to explain predictions', '- Identify factors that increase or decrease prediction
+          probabilities', '- Analyze customer segments using trained ML models', '- Provide business insights from model outputs',
+        '- Provide actionable recommendations and marketing actions based on analysis to target using any of email, direct
+          mail, social media or web mediums', 'Available models and their purposes:', '- churn: Customer churn prediction',
+        '- crosssell_hvac: HVAC system cross-sell probability', '- crosssell_insurance: Insurance product cross-sell probability',
+        '- crosssell_solar: Solar panel cross-sell probability', '- upsell_green_plan: Green energy plan upsell probability',
+        '- upsell_efficiency_analysis: Energy efficiency analysis upsell', '- upsell_surge_protection: Surge protection upsell
+          probability', 'I can analyze:', '- Positive factors: What drives higher prediction probabilities', '- Negative factors:
+          What protects against churn or reduces upsell likelihood', I always provide detailed business interpretations of
+          SHAP results., 'I will also make sure atleast 3 marketing actions are provided based on the analysis to target using
+          any of email, direct mail, social media or web mediums.']
+  ml_workflow_agent:
+    type: instance
+    params:
+      name: ml_workflow_agent
+      description: Sequential workflow for ML model analysis
+      sub_agents: [sql_developer_agent_ml, ml_analysis_agent]
+  root_agent.0:
+    type: instance
+    params:
+      name: alberta_energy_viz_coordinator
+      description: Coordinates the complete visualization workflow using specialized agents
+      sub_agents: [sql_data_agent, visualization_generator]
+      instance: root_agent
+  root_agent.1:
+    type: instance
+    models: [gemini-2.5-pro]
+    tools: [extract_customer_data, analyze_customer_churn_factors, analyze_customer_protective_factors, generate_personalized_email,
+      generate_personalized_call_script, analyze_customer_profile_tool]
+    params:
+      name: retention_agent
+      description: Retention Agent that creates personalized retention campaigns for individual customers
+      instruction: [I am the Retention Agent that creates personalized retention campaigns automatically., 'For ANY retention
+          request, I run the complete workflow and display the results directly:', 1. Extract customer data using SQL, 2.
+          Analyze churn factors with SHAP, 3. Generate personalized content (email or call script as requested), 4. Display
+          the content clearly formatted for immediate use, 'For any analysis request, I:', '- Extract customer data', '- Analyze
+          churn and protective factors using SHAP', '- Use analyze_customer_profile_tool to get comprehensive insights on
+          customer on churn risk', '- Gnereate a comprehensive report with all findings and display it', '**Request Examples:**',
+        '- "Create retention email for customer CUST00008098" → Generate and display email', '- "Generate call script for
+          customer X" → Generate and display call script', '- "Analyze churn factors for customer Y" → Analyze and display
+          churn factors', 'I show the generated content directly in a clear, readable format.']
+      instance: root_agent
+  root_agent.2:
+    type: instance
+    models: [gemini-2.5-pro]
+    params:
+      name: portfolio_manager_agent
+      description: |-
+        Portfolio Manager that performs comprehensive portfolio analysis for Alberta Energy AI.
+            Duties include ML model effect/contribution analysis, customer lifetime value (CLV) analysis, portfolio segmentation analysis etc.
+      instruction: [I am the Portfolio Manager for Alberta Energy AI customer intelligence., 'I coordinate a team of specialist
+          agents to provide comprehensive customer analysis:', '**For ML Model Analysis:**', '- Questions about "churn factors",
+          "what drives churn/main causes of churn" → Delegate to ml_workflow_agent for churn model', '- Questions about "HVAC
+          cross-sell", "HVAC opportunities" → Delegate to ml_workflow_agent for crosssell_hvac', '- Questions about "solar
+          cross-sell", "solar opportunities" → Delegate to ml_workflow_agent for crosssell_solar', '- Questions about "green
+          energy", "green plan upsell" → Delegate to ml_workflow_agent for upsell_green_plan', '- Questions about "protective
+          factors", "preventing churn" → Delegate to ml_workflow_agent with negative factors', '- Questions about "insurance
+          cross-sell" → Delegate to ml_workflow_agent for crosssell_insurance', '- Questions about "efficiency analysis" →
+          Delegate to ml_workflow_agent for upsell_efficiency_analysis', '**When asked to create a report on factors that
+          lead to churn or upsell opportunities, use ml_workflow_agent **', '**For Basic SQL and Data Analysis:**', '- Questions
+          about "data", "customers", "segments"  → Delegate to sql_developer_agent', '**My Process:**', 1. Analyze the business
+          question to determine the type of analysis needed, 2. Extract customer criteria and segments from the request, 3.
+          Delegate to the appropriate specialist agent or workflow, 4. Synthesize results into actionable business insights,
+        5. Provide strategic recommendations based on findings, '- DO NOT ask for SQL queries or dataset names. You have specialized
+          agents for that.', I always provide executive-level insights and connect analysis to business value., 'When asked
+          for ML model analysis, I will also make sure to provide marketing actions based on the analysis to target using
+          any of email, direct mail, social media or web mediums.', "."]
+      instance: root_agent
+      sub_agents: [ml_workflow_agent, clv_analysis_agent, sql_developer_agent]
+  root_agent.3:
+    type: instance
+    models: [gemini-2.5-flash]
+    tools: [extract_customer_data, identify_sales_opportunities, analyze_sales_promoting_factors, generate_sales_email_tool,
+      generate_call_script_tool]
+    params:
+      name: sales_assistant_agent
+      description: Sales Assistant Agent for personalized sales campaigns
+      instruction: [I am the Sales Assistant Agent. I help create personalized sales campaigns., 'My workflow:', 1. Extract
+          customer data using extract_customer_data(), 2. Find sales opportunities using identify_sales_opportunities(), 3.
+          Analyze promoting factors using analyze_sales_promoting_factors(), 4. Generate content using generate_sales_email_tool()
+          or generate_call_script_tool(), 'I can handle requests like:', '- "Create sales campaign for customer X"', '- "Generate
+          call script for customer Y"', '- "Analyze sales factors for customer Z"']
+      instance: root_agent
+  root_agent.4:
+    type: instance
+    models: [gemini-2.5-flash]
+    tools: [generate_sql_query_tool, execute_query_dataframe_tool, execute_query_json_tool, analyze_tou_plan_fit, analyze_energy_efficiency,
+      get_customer_energy_insights]
+    params:
+      name: energy_advisor_agent
+      instruction: [You are an expert energy advisor with access to smart meter data and analysis tools., 'Your capabilities
+          include:', '1. **SQL Analysis**: Generate and execute SQL queries on energy data', '2. **TOU Plan Analysis**: Assess
+          customer fit for Time of Use plans (8PM-8AM free, daytime 2x cost)', '3. **Energy Efficiency**: Analyze usage patterns
+          and provide improvement recommendations', '4. **Comprehensive Insights**: Combine multiple analyses for actionable
+          advice', 'When a user asks about:', '- "TOU plan" or "time of use" → use analyze_tou_plan_fit', '- "energy efficiency"
+          or "reduce usage" → use analyze_energy_efficiency', '- "energy insights" or "complete analysis" → use get_customer_energy_insights',
+        '- Custom data queries → use generate_sql_query_tool then execute_query_json_tool', 'Always:', '- Ask for customer_id
+          if not provided', '- Explain your analysis in simple terms', '- Provide specific, actionable recommendations', '-
+          Include dollar savings when relevant', '- Cite the data sources and timeframes used']
+      description: Expert energy advisor with smart meter data analysis capabilities
+      function: create_comprehensive_energy_agent
+      instance: root_agent
+  social_agent:
+    type: instance
+    models: [gemini-2.0-flash]
+    tools: [social_media_specialist_tool]
+    params:
+      name: social_media_specialist
+      instruction: ['You are a SOCIAL MEDIA MARKETING SPECIALIST focused on creating viral, engaging content.', 'EXPERTISE:',
+        '📱 Platform-specific optimization (Facebook, Instagram, LinkedIn, Twitter)', '#️⃣ Strategic hashtag research and implementation',
+        💬 Engagement-driven copy that drives interaction, 🔄 Shareable content that amplifies reach, 'Always create one final,
+          polished social media campaign that''s immediately ready for posting.', 'Focus on building community, driving engagement,
+          and increasing brand visibility.']
+      description: Social media specialist for engaging, viral content
+      function: create_social_media_agent
+  sql_data_agent:
+    type: instance
+    models: [gemini-2.5-flash]
+    tools: [get_sql_data]
+    params:
+      name: sql_data_retrieval_agent
+      description: Retrieves SQL data based on user requests
+      instruction: [You are a SQL Data Retrieval Specialist., 'Your job is to:', 1. Take the user's natural language request,
+        2. Use the get_sql_data tool to retrieve relevant data, 3. Store the data in session state for other agents, Always
+          use the get_sql_data tool with the user's original request., Provide clear feedback about the data retrieval process.]
+      output_key: sql_retrieval_result
+  sql_developer_agent:
+    type: instance
+    models: [gemini-2.5-pro]
+    tools: [generate_sql_query, execute_sql_query]
+    params:
+      name: sql_developer_agent
+      description: Specialist that generates and executes queries for customer analysis with the help of tools
+      instruction: [I am Specialist that generates and executes queries for customer analysis with the help of tools for Alberta
+          Energy AI customer analysis., '**My Process:**', 1. IMMEDIATELY call generate_sql_query tool with the user's request,
+        2. IMMEDIATELY call execute_sql_query with the generated SQL, 3. Return results received from execute_sql_query exactly
+          as received, 'Example:', '**For "churn analysis in Calgary" requests:**', '- Call generate_sql_query("Get all customer
+          data for Calgary customers for churn analysis")', '- Execute the query', '- Pass results to next agent', I ALWAYS
+          use my tools - I never ask questions about database structure.]
+  sql_developer_agent_ml:
+    type: instance
+    models: [gemini-2.5-pro]
+    tools: [generate_sql_query, execute_sql_query]
+    params:
+      name: sql_developer_agent_ml
+      description: SQL specialist for ML workflows
+      instruction: [I generate SQL queries with SELECT * for model scoring with help from tools., '**My Process:**', 1. IMMEDIATELY
+          call generate_sql_query tool with the user's request, 2. IMMEDIATELY call execute_sql_query with the generated SQL,
+        3. Return results for ML analysis, 'For example:', '**For "churn analysis in Calgary" requests:**', '- Call generate_sql_query("Get
+          all customer data for Calgary customers for churn analysis")', '- Execute the query', '- Pass results to next agent',
+        I ALWAYS use my tools - I never ask questions about database structure., I will always make sure the SQL query is
+          generated with SELECT * to ensure all features are available for SHAP analysis.]
+  sql_specialist.0:
+    type: instance
+    models: [gemini-2.5-flash]
+    tools: [generate_sql_query_tool, execute_query_json_tool, execute_query_dataframe_tool]
+    params:
+      name: sql_specialist
+      instruction: [You are a SQL expert for energy data analysis. You generate and execute, SQL queries on smart meter data
+          to answer specific questions about energy usage patterns.]
+      function: create_specialized_agents
+      instance: sql_specialist
+  sql_specialist.1:
+    type: instance
+    models: [gemini-2.5-flash]
+    tools: [generate_sql_query_tool, execute_query_json_tool, execute_query_dataframe_tool]
+    params:
+      name: sql_specialist
+      instruction: [You are a SQL expert for energy data analysis. You generate and execute, SQL queries on smart meter data
+          to answer specific questions about energy usage patterns.]
+      function: create_specialized_agents
+      instance: sql_specialist
+  tou_specialist.0:
+    type: instance
+    models: [gemini-2.5-flash]
+    tools: [analyze_tou_plan_fit]
+    params:
+      name: tou_specialist
+      instruction: [You are a TOU (Time of Use) plan specialist. You help customers determine, if they would benefit from
+          TOU plans where nighttime usage (8PM-8AM) is free and, daytime usage costs twice the normal rate. Always provide
+          clear savings calculations.]
+      function: create_specialized_agents
+      instance: tou_specialist
+  tou_specialist.1:
+    type: instance
+    models: [gemini-2.5-flash]
+    tools: [analyze_tou_plan_fit]
+    params:
+      name: tou_specialist
+      instruction: [You are a TOU (Time of Use) plan specialist. You help customers determine, if they would benefit from
+          TOU plans where nighttime usage (8PM-8AM) is free and, daytime usage costs twice the normal rate. Always provide
+          clear savings calculations.]
+      function: create_specialized_agents
+      instance: tou_specialist
+  visualization_generator:
+    type: instance
+    models: [gemini-2.5-flash]
+    params:
+      name: intelligent_visualization_generator
+      description: Creates intelligent Python visualization code by analyzing data and user requirements
+      instruction: ['You are an expert data visualization developer with deep knowledge of Python, matplotlib, seaborn, and
+          plotly.', 'Your job is to analyze the data in state[''sql_data''] and the user''s request, then generate complete,
+          executable Python visualization code.', MAKE SURE YOU ONLY GENERATE CODE AS OUTPUT AND NOTHING ELSE., 'NO EXPLANATIONS,
+          NO TEXT, JUST EXECUTABLE PYTHON CODE.', 'CRITICAL REQUIREMENT - SELF-CONTAINED CODE:', '- The generated code MUST
+          be completely self-contained and executable', '- Include the ACTUAL data from state[''sql_data''][''data_rows'']
+          directly in the code as hardcoded data', '- Do NOT use state[''sql_data''] in the generated code output', '- Create
+          the DataFrame directly from hardcoded data_rows list', 'ANALYZE THE DATA INTELLIGENTLY:', '1. **Data Structure**:
+          Look at columns, data types, row count from state[''sql_data'']', '2. **Data Patterns**: Understand what the data
+          represents', '3. **User Intent**: Parse what visualization they actually want', '4. **Best Practices**: Choose optimal
+          chart types for the data', 'GENERATE SMART CODE STRUCTURE:', import pandas as pd, import matplotlib.pyplot as plt,
+        import seaborn as sns, import numpy as np, '# Data from SQL query (embed actual data here)', 'data_rows = [', '{''column1'':
+          actual_value1, ''column2'': actual_value2},', '{''column1'': actual_value3, ''column2'': actual_value4},', '# Include
+          ALL actual rows from state[''sql_data''][''data_rows'']', ']', '# Create DataFrame', df = pd.DataFrame(data_rows),
+        '# Your intelligent visualization code here', plt.show(), 'EXAMPLES OF INTELLIGENT DECISIONS:', Single row with multiple
+          numeric columns → Bar chart of columns, Time series data → Line charts with trends, Categorical vs numeric → Grouped
+          bar charts or box plots, Distribution requests → Histograms or density plots, Comparison requests → Side-by-side
+          charts, 'OUTPUT REQUIREMENTS:', '*Generate ONLY complete, executable Python code', '*Start with necessary imports',
+        '*Include the ACTUAL data from state[''sql_data''][''data_rows''] as hardcoded data_rows = [...]', '*Create DataFrame
+          from the hardcoded data: df = pd.DataFrame(data_rows)', '*Add appropriate visualizations with professional styling',
+        '*Include insights and statistics', '*End with plt.show()', '*NO explanations, NO text, JUST EXECUTABLE PYTHON CODE',
+        '*NO state access in generated code - everything self-contained', '*MAKE SURE YOU ONLY GENERATE CODE AS OUTPUT AND
+          NOTHING ELSE.', '*NO EXPLANATIONS, NO TEXT, JUST EXECUTABLE PYTHON CODE.', 'THE CODE MUST BE SELF-CONTAINED WITH
+          HARDCODED DATA FROM state[''sql_data''][''data_rows''].', Be intelligent about chart selection - analyze the actual
+          data and request to create the perfect visualization.]
+      output_key: generated_code
+  viz_agent:
+    type: instance
+    models: [gemini-2.0-flash]
+    tools: [built_in_code_execution, google_search]
+    params:
+      name: advanced_viz_agent
+      instruction: [You are an advanced data visualization expert with access to Python code execution., 'Your capabilities
+          include:', '1. Creating sophisticated visualizations using matplotlib, seaborn, plotly, and other Python libraries',
+        2. Performing statistical analysis and data exploration, 3. Generating interactive plots and dashboards, '4. Handling
+          multiple data formats (CSV, JSON, SQL results, etc.)', 5. Creating publication-quality graphics, '6. Implementing
+          advanced visualization techniques (heatmaps, 3D plots, animations, etc.)', 'When creating visualizations:', '- Always
+          start by examining the data structure and types', '- Choose appropriate visualization types based on data characteristics',
+        '- Use modern, aesthetically pleasing styling', '- Include proper labels, titles, and legends', '- Handle edge cases
+          and missing data gracefully', '- Save visualizations as high-quality images or HTML files', '- Provide insights
+          and interpretations of the visualizations', 'Available libraries you can use:', '- matplotlib.pyplot for basic plotting',
+        '- seaborn for statistical visualizations', '- plotly.express and plotly.graph_objects for interactive plots', '-
+          pandas for data manipulation', '- numpy for numerical operations', '- scipy for statistical functions', '- sklearn
+          for machine learning visualizations', Always execute Python code to create actual visualizations rather than just
+          describing them.]
+      description: Advanced data visualization agent with dynamic code execution capabilities
+      class: AdvancedVisualizationAgent
+
+models:
+  gemini-2.0-flash:
+    type: literal
+    agents: [viz_agent, email_agent, social_agent, direct_mail_agent, landing_page_agent, coordinator_agent]
+  gemini-2.5-flash:
+    type: literal
+    agents: [sql_data_agent, visualization_generator, root_agent.4, tou_specialist.0, efficiency_specialist.0, sql_specialist.0,
+      agent, agent.create_comprehensive_energy_agent.1, tou_specialist.1, efficiency_specialist.1, sql_specialist.1, agent.create_energy_coordinator_agent.1,
+      main_coordinator, root_agent.3]
+  gemini-2.5-pro:
+    type: literal
+    agents: [root_agent.1, sql_developer_agent, ml_analysis_agent, clv_analysis_agent, sql_developer_agent_ml, root_agent.2]
+
+tools:
+  analyze_customer_churn_factors:
+    type: wrapper
+    agents: [root_agent.1]
+    params:
+      wrapper: FunctionTool
+      wraps: analyze_customer_churn_factors
+      description: "Analyze churn factors for specific customer using SHAP.\n\nArgs:\n    customer_id: Customer identifier\n\
+        \    sql_query: SQL query that returns customer data with all columns\n    \nReturns:\n    str: SHAP analysis results\
+        \ with churn factors"
+  analyze_customer_profile_tool:
+    type: wrapper
+    agents: [root_agent.1]
+    params:
+      wrapper: FunctionTool
+      wraps: analyze_customer_profile_tool
+      description: "ADK Tool: Analyze customer profile and provide sales insights\n\nArgs:\n    customer_id: Customer identifier\n\
+        \    customer_data: Customer profile data from SQL\n    sales_promoting_factors: SHAP analysis of factors promoting\
+        \ sales\n    sales_preventing_factors: SHAP analysis of factors preventing sales\n    \nReturns:\n    JSON string\
+        \ with customer analysis and sales recommendations"
+  analyze_customer_protective_factors:
+    type: wrapper
+    agents: [root_agent.1]
+    params:
+      wrapper: FunctionTool
+      wraps: analyze_customer_protective_factors
+      description: "Analyze protective factors that reduce churn risk for customer.\n\nArgs:\n    customer_id: Customer identifier\
+        \  \n    sql_query: SQL query that returns customer data with all columns\n    \nReturns:\n    str: SHAP analysis\
+        \ results with protective factors"
+  analyze_energy_efficiency:
+    type: function
+    agents: [root_agent.4, efficiency_specialist.0, agent.create_comprehensive_energy_agent.1, efficiency_specialist.1]
+    params:
+      description: "Enhanced ADK Tool: Intelligent energy efficiency analysis with personalized recommendations\n\nThis tool\
+        \ provides sophisticated analysis including:\n- Equipment degradation detection\n- Seasonal efficiency patterns\n\
+        - Usage trend analysis\n- Phantom load detection\n- Peak efficiency assessment\n- Personalized recommendations based\
+        \ on actual patterns\n\nArgs:\n    customer_id: Customer ID to analyze (e.g., 'CUST000001')\n    analysis_days: Maximum\
+        \ days to analyze (default: 365)\n    \nReturns:\n    JSON string with comprehensive personalized energy efficiency\
+        \ analysis"
+  analyze_ml_model:
+    type: wrapper
+    agents: [ml_analysis_agent]
+    params:
+      wrapper: FunctionTool
+      wraps: analyze_ml_model
+      description: "Analyze ML model using SHAP with customer data from SQL query.\n\nUse this tool to understand what factors\
+        \ drive model predictions.\n\nArgs:\n    sql_query: SQL query that returns customer data with all columns (SELECT\
+        \ *)\n    model_name: Model to analyze (churn, crosssell_hvac, crosssell_insurance, \n               crosssell_solar,\
+        \ upsell_green_plan, upsell_efficiency_analysis, \n               upsell_surge_protection)\n    target_event: \"positive\"\
+        \ for factors that increase probability, \n                 \"negative\" for protective factors\n\nReturns:\n    str:\
+        \ Detailed SHAP analysis report with contributing factors"
+  analyze_sales_promoting_factors:
+    type: wrapper
+    agents: [root_agent.3]
+    params:
+      wrapper: FunctionTool
+      wraps: analyze_sales_promoting_factors
+      description: "Analyze factors that PROMOTE sales for a specific product using SHAP.\n\nArgs:\n    customer_id: Customer\
+        \ identifier\n    sql_query: SQL query that returns customer data\n    product_model_name: ML model name (e.g., 'crosssell_hvac')\n\
+        \    \nReturns:\n    str: SHAP analysis of factors that increase sales probability"
+  analyze_tou_plan_fit:
+    type: function
+    agents: [root_agent.4, tou_specialist.0, agent.create_comprehensive_energy_agent.1, tou_specialist.1]
+    params:
+      description: "ADK Tool: Analyze customer's fit for 8PM-8AM TOU (Time of Use) plan\n\nThis tool analyzes a customer's\
+        \ energy usage pattern using all available data\nOR the last 365 days (whichever is smaller) to determine if they\
+        \ would benefit \nfrom a Time of Use plan where nighttime (8PM-8AM) usage is free and\ndaytime (8AM-8PM) usage costs\
+        \ twice the normal rate.\n\nArgs:\n    customer_id: Customer ID to analyze (e.g., 'CUST000001')\n    analysis_days:\
+        \ Maximum days to analyze (default: 365)\n    \nReturns:\n    JSON string with TOU plan fit analysis and recommendations"
+  built_in_code_execution:
+    type: function
+    agents: [viz_agent]
+  calculate_customer_clv:
+    type: wrapper
+    agents: [clv_analysis_agent]
+    params:
+      wrapper: FunctionTool
+      wraps: calculate_customer_clv
+      description: "Calculate Customer Lifetime Value from SQL query results.\n\nUse this tool to analyze CLV for customer\
+        \ segments.\nRequires customers with: customer_id, annual_income, monthly_usage_kwh, satisfaction_score\n\nArgs:\n\
+        \    sql_query: SQL query returning customer data with required CLV columns\n    \nReturns:\n    str: CLV analysis\
+        \ report with statistics and top customers"
+  direct_mail_specialist_tool:
+    type: function
+    agents: [direct_mail_agent]
+    params:
+      description: Direct mail specialist - creates high-response physical mail campaigns
+  email_marketing_specialist_tool:
+    type: function
+    agents: [email_agent]
+    params:
+      description: Email marketing specialist - creates high-converting email campaigns
+  energy_tool:
+    type: agent
+    agents: [energy_efficiency_agent, main_coordinator]
+    params:
+      wrapper: AgentTool
+      agent: energy_efficiency_agent
+  execute_query_dataframe_tool:
+    type: function
+    agents: [root_agent.4, sql_specialist.0, agent.create_comprehensive_energy_agent.1, sql_specialist.1]
+    params:
+      description: "ADK Tool: Execute SQL query and return DataFrame info\n\n\nArgs:\n    sql_query: SQL query to execute\n\
+        \    \nReturns:\n    JSON string with DataFrame information and sample data"
+  execute_query_json_tool:
+    type: function
+    agents: [root_agent.4, sql_specialist.0, agent.create_comprehensive_energy_agent.1, sql_specialist.1]
+    params:
+      description: "ADK Tool: Execute SQL query and return complete results as JSON\n\n\nArgs:\n    sql_query: SQL query to\
+        \ execute\n    \nReturns:\n    JSON string with complete query results"
+  execute_sql_query:
+    type: wrapper
+    agents: [sql_developer_agent, sql_developer_agent_ml]
+    params:
+      wrapper: FunctionTool
+      wraps: execute_sql_query
+      description: "Execute SQL query and return results as DataFrame information.\n\nUse this tool to run SQL queries and\
+        \ get structured data results.\n\nArgs:\n    sql_query: SQL query to execute\n    \nReturns:\n    str: JSON string\
+        \ with query results and metadata"
+  extract_customer_data:
+    type: wrapper
+    agents: [root_agent.1, root_agent.3]
+    params:
+      wrapper: FunctionTool
+      wraps: extract_customer_data
+      description: "Extract complete customer data for retention analysis.\n\nArgs:\n    customer_id: Unique customer identifier\n\
+        \    \nReturns:\n    str: JSON string with customer data and metadata"
+  generate_call_script_tool:
+    type: wrapper
+    agents: [root_agent.3]
+    params:
+      wrapper: FunctionTool
+      wraps: generate_call_script_tool
+      description: "ADK Tool: Generate personalized call script based on customer analysis with SHAP reasoning\n\nArgs:\n\
+        \    customer_id: Customer identifier\n    customer_data: Customer profile data from SQL\n    sales_promoting_factors:\
+        \ SHAP analysis of factors promoting sales\n    sales_preventing_factors: SHAP analysis of factors preventing sales\n\
+        \    product_name: Name of the product being sold (optional)\n    sales_probability: Probability of sales success\
+        \ (optional)\n    call_type: Type of call (sales, win_back, check_in, issue_resolution)\n    approach: Call approach\
+        \ (consultative, relationship_building, problem_solving, value_reinforcement)\n    \nReturns:\n    str: Clean formatted\
+        \ call script ready for display with SHAP reasoning"
+  generate_personalized_call_script:
+    type: wrapper
+    agents: [root_agent.1]
+    params:
+      wrapper: FunctionTool
+      wraps: generate_personalized_call_script
+      description: "Generate personalized call script based on customer analysis.\n\nArgs:\n    customer_id: Customer identifier\n\
+        \    customer_data: Customer profile data\n    churn_factors: SHAP analysis of churn risk factors\n    protective_factors:\
+        \ SHAP analysis of protective factors\n    call_type: Type of call (retention, win_back, check_in)\n    approach:\
+        \ Call approach (consultative, problem_solving, relationship_building)\n    \nReturns:\n    str: Generated personalized\
+        \ call script"
+  generate_personalized_email:
+    type: wrapper
+    agents: [root_agent.1]
+    params:
+      wrapper: FunctionTool
+      wraps: generate_personalized_email
+      description: "Generate personalized retention email based on customer analysis.\n\nArgs:\n    customer_id: Customer\
+        \ identifier\n    customer_data: Customer profile data\n    churn_factors: SHAP analysis of churn risk factors\n \
+        \   protective_factors: SHAP analysis of protective factors\n    email_type: Type of email (retention, win_back, loyalty)\n\
+        \    tone: Email tone (empathetic, professional, urgent, friendly)\n    \nReturns:\n    str: Generated personalized\
+        \ email content"
+  generate_sales_email_tool:
+    type: wrapper
+    agents: [root_agent.3]
+    params:
+      wrapper: FunctionTool
+      wraps: generate_sales_email_tool
+      description: "ADK Tool: Generate personalized sales email based on customer analysis\n\nArgs:\n    customer_id: Customer\
+        \ identifier\n    customer_data: Customer profile data from SQL\n    sales_promoting_factors: SHAP analysis of factors\
+        \ promoting sales\n    sales_preventing_factors: SHAP analysis of factors preventing sales\n    product_name: Name\
+        \ of the product being sold (optional)\n    sales_probability: Probability of sales success (optional)\n    email_type:\
+        \ Type of email (sales, win_back, loyalty, survey)\n    tone: Email tone (empathetic, professional, urgent, friendly,\
+        \ appreciative)\n    \nReturns:\n    str: Clean formatted email content ready for display"
+  generate_sql_query:
+    type: wrapper
+    agents: [sql_developer_agent, clv_analysis_agent, sql_developer_agent_ml]
+    params:
+      wrapper: FunctionTool
+      wraps: generate_sql_query
+      description: "Generate SQL query from natural language description.\n\nUse this tool when you need to create SQL queries\
+        \ for customer analysis.\n\n\nArgs:\n    query_description: Natural language description of what data to retrieve\n\
+        \    \nReturns:\n    str: Generated SQL query ready for execution"
+  generate_sql_query_tool:
+    type: function
+    agents: [root_agent.4, sql_specialist.0, agent.create_comprehensive_energy_agent.1, sql_specialist.1]
+    params:
+      description: "ADK Tool: Generate SQL query from natural language\n\nArgs:\n    user_question: Natural language question\
+        \ about data\n    \nReturns:\n    JSON string with generated SQL query"
+  get_customer_energy_insights:
+    type: function
+    agents: [root_agent.4, agent.create_comprehensive_energy_agent.1]
+    params:
+      description: "ADK Tool: Get comprehensive energy insights combining TOU fit and efficiency analysis\n\nThis tool provides\
+        \ a complete energy analysis by combining TOU plan fit assessment\nwith energy efficiency analysis using all available\
+        \ data OR the last 365 days\n(whichever is smaller) to give customers actionable insights.\n\nArgs:\n    customer_id:\
+        \ Customer ID to analyze (e.g., 'CUST000001')\n    analysis_days: Maximum days to analyze (default: 365)\n    \nReturns:\n\
+        \    JSON string with comprehensive energy insights and recommendations"
+  get_sql_data:
+    type: wrapper
+    agents: [sql_data_agent]
+    params:
+      wrapper: FunctionTool
+      wraps: get_sql_data
+      description: Get SQL data and store in state for agents
+  google_search:
+    type: module
+    agents: [viz_agent]
+  identify_sales_opportunities:
+    type: wrapper
+    agents: [root_agent.3]
+    params:
+      wrapper: FunctionTool
+      wraps: identify_sales_opportunities
+      description: Identify top 2 products for upsell/cross-sell
+  marketing_coordinator_tool:
+    type: function
+    agents: [coordinator_agent]
+    params:
+      description: Marketing coordinator with proper routing to all specialists
+  portfolio_tool:
+    type: agent
+    agents: [portfolio_manager_agent, main_coordinator]
+    params:
+      wrapper: AgentTool
+      agent: portfolio_manager_agent
+  retention_tool:
+    type: agent
+    agents: [retention_agent, main_coordinator]
+    params:
+      wrapper: AgentTool
+      agent: retention_agent
+  sales_tool:
+    type: agent
+    agents: [sales_agent, main_coordinator]
+    params:
+      wrapper: AgentTool
+      agent: sales_agent
+  social_media_specialist_tool:
+    type: function
+    agents: [social_agent]
+    params:
+      description: Social media specialist - creates social campaigns
+  visualization_tool:
+    type: agent
+    agents: [visualization_agent, main_coordinator]
+    params:
+      wrapper: AgentTool
+      agent: visualization_agent
+  web_landing_page_specialist_tool:
+    type: function
+    agents: [landing_page_agent]
+    params:
+      description: Landing page specialist - creates conversion-optimized web pages
+
+teams:
+  ml_workflow_agent:
+    type: sequential
+    agents: [ml_workflow_agent, sql_developer_agent_ml, ml_analysis_agent]
+  root_agent:
+    type: sequential
+    agents: [root_agent, sql_data_agent, visualization_generator]
+  root_agent.2:
+    type: hierarchy
+    agents: [root_agent.2, ml_workflow_agent, clv_analysis_agent, sql_developer_agent]
+
+imports:
+  AdkApp: vertexai.preview.reasoning_engines.AdkApp
+  Agent: google.adk.agents.Agent
+  AgentTool: google.adk.tools.agent_tool.AgentTool
+  analyze_customer_profile_tool: retention_content_tools.analyze_customer_profile_tool
+  analyze_energy_efficiency: energy_analysis_tools.analyze_energy_efficiency
+  analyze_model_with_shap_tool: shared_tools.mlagent.analyze_model_with_shap_tool
+  analyze_tou_plan_fit: energy_analysis_tools.analyze_tou_plan_fit
+  Any: typing.Any
+  asyncio: asyncio
+  base64: base64
+  bigquery: google.cloud.bigquery
+  built_in_code_execution: google.adk.tools.built_in_code_execution
+  BuiltInCodeExecutor: google.adk.code_executors.BuiltInCodeExecutor
+  BytesIO: io.BytesIO
+  calculate_clv_from_query_results_tool_simple: test.calculate_clv_from_query_results_tool_simple
+  chat_with_coordinator_live_stream: main_agent.agent.chat_with_coordinator_live_stream
+  clean_sql_response: subtools.clean_sql_response
+  config: config.config
+  Content: google.genai.types.Content
+  create_chart_from_sql_tool: visualization_agent.create_chart_from_sql_tool
+  create_kpi_dashboard_simple_tool: visualization_agent.create_kpi_dashboard_simple_tool
+  create_multiple_charts_tool: visualization_agent.create_multiple_charts_tool
+  create_portfolio_manager_app: agent.create_portfolio_manager_app
+  create_retention_app: agent.create_retention_app
+  create_sales_app: agent.create_sales_app
+  dataclass: dataclasses.dataclass
+  date: datetime.date
+  datetime: datetime.datetime
+  Dict: typing.Dict
+  Document: docx.Document
+  energy_efficiency_agent: energy_efficiency.agent.root_agent
+  evaluate_agent: google.adk.evaluation.evaluate_agent
+  execute_query_dataframe_tool: shared_tools.simple_sql_agents.execute_query_dataframe_tool
+  execute_query_json_tool: shared_tools.simple_sql_agents.execute_query_json_tool
+  FunctionTool: google.adk.tools.FunctionTool
+  genai: google.genai
+  generate_call_script_tool: sales_content_tools.generate_call_script_tool
+  generate_marketing_image_tool: image_gen.generate_marketing_image_tool
+  generate_marketing_package: marketing_agent.agent.generate_marketing_package
+  generate_retention_email_tool: retention_content_tools.generate_retention_email_tool
+  generate_sales_email_tool: sales_content_tools.generate_sales_email_tool
+  generate_sql_query_tool: shared_tools.simple_sql_agents.generate_sql_query_tool
+  GenerativeModel: vertexai.generative_models.GenerativeModel
+  get_customer_energy_insights: energy_analysis_tools.get_customer_energy_insights
+  get_sales_eligibility_customer: sales_content_tools.get_sales_eligibility_customer
+  google_search: google.adk.tools.google_search
+  Image: PIL.Image
+  Inches: docx.shared.Inches
+  initialize_sql_components: shared_tools.simple_sql_agents.initialize_sql_components
+  InMemorySessionService: google.adk.sessions.InMemorySessionService
+  is_valid_sql: subtools.is_valid_sql
+  json: json
+  List: typing.List
+  LlmAgent: google.adk.agents.LlmAgent
+  load_and_score: shared_tools.mlagent.load_and_score
+  main_coordinator: main_agent.agent.main_coordinator
+  marketing_coordinator_tool: marketing_agent.agent.marketing_coordinator_tool
+  marketing_root_agent: marketing_agent.agent.root_agent
+  np: numpy
+  Optional: typing.Optional
+  os: os
+  Part: google.genai.types.Part
+  Path: pathlib.Path
+  pathlib: pathlib
+  pd: pandas
+  PercentFormatter: matplotlib.ticker.PercentFormatter
+  pickle: pickle
+  plt: matplotlib.pyplot
+  portfolio_manager_agent: portfolio_manager.agent.root_agent
+  PortfolioConfig: config.PortfolioConfig
+  Pt: docx.shared.Pt
+  re: re
+  register_session_image_tool: marketing_agent.marketing_content_tools.register_session_image_tool
+  retention_agent: retention_agent.agent.root_agent
+  RetentionConfig: config.RetentionConfig
+  root_agent: portfolio_manager.agent.root_agent
+  Runner: google.adk.runners.Runner
+  sales_agent: sales_agent.agent.root_agent
+  salesConfig: config.salesConfig
+  SequentialAgent: google.adk.agents.SequentialAgent
+  setup_main_coordinator_session: main_agent.agent.setup_main_coordinator_session
+  sns: seaborn
+  st: streamlit
+  storage: google.cloud.storage
+  sys: sys
+  tabulate: tabulate.tabulate
+  tempfile: tempfile
+  TextEmbeddingModel: vertexai.language_models.TextEmbeddingModel
+  time: datetime.time
+  ToolContext: google.adk.tools.ToolContext
+  traceback: traceback
+  types: google.genai.types
+  Union: typing.Union
+  uuid: uuid
+  vertexai: vertexai
+  visualization_agent: visualization_agent.agent.root_agent
+  WD_ALIGN_PARAGRAPH: docx.enum.text.WD_ALIGN_PARAGRAPH
+  xgb: xgboost
+  zipfile: zipfile
+
+functions:
+  __init__:
+    type: sync
+    module: shared_tools.simple_sql_agents
+    args: [self, project_id, dataset_name]
+  __post_init__:
+    type: sync
+    module: portfolio_manager.config
+    args: [self]
+  _create_downloadable_package:
+    type: sync
+    module: marketing_agent.agent
+    args: [specialist_data, campaign_instructions, medium]
+    params:
+      returns: Dict
+  _create_html_presentation:
+    type: sync
+    module: marketing_agent.agent
+    args: [specialist_data, campaign_instructions, medium]
+    params:
+      returns: str
+  _detect_marketing_medium:
+    type: sync
+    module: marketing_agent.agent
+    args: [campaign_instructions]
+    params:
+      returns: str
+  _extract_visual_elements:
+    type: sync
+    module: marketing_agent.agent
+    args: [campaign_instructions, specialist_type]
+    params:
+      returns: str
+  _find_related_images:
+    type: sync
+    module: marketing_agent.marketing_content_tools
+    args: [self, content_type, images_by_type]
+    params:
+      returns: List
+  _format_content_in_doc:
+    type: sync
+    module: marketing_agent.marketing_content_tools
+    args: [self, doc, content, content_type]
+  _generate_data_loading_code:
+    type: sync
+    module: shared_tools.visualization_agent
+    args: [self, data_source]
+    params:
+      returns: str
+  _generate_specialist_image:
+    type: sync
+    module: marketing_agent.agent
+    args: [campaign_instructions, specialist_type]
+    params:
+      returns: Dict
+  _get_simple_visual_description:
+    type: sync
+    module: marketing_agent.agent
+    args: [campaign_instructions, specialist_type]
+    params:
+      returns: str
+  _get_unmatched_images:
+    type: sync
+    module: marketing_agent.marketing_content_tools
+    args: [self, content_files, image_files]
+    params:
+      returns: List
+  _parse_direct_mail_content:
+    type: sync
+    module: marketing_agent.agent
+    args: [content]
+    params:
+      returns: Dict
+  _parse_email_content:
+    type: sync
+    module: marketing_agent.agent
+    args: [content]
+    params:
+      returns: Dict
+  _parse_landing_page_content:
+    type: sync
+    module: marketing_agent.agent
+    args: [content]
+    params:
+      returns: Dict
+  _parse_social_content:
+    type: sync
+    module: marketing_agent.agent
+    args: [content]
+    params:
+      returns: Dict
+  about_page:
+    type: sync
+    module: main_agent_app
+  analyze_and_visualize_tool:
+    type: sync
+    module: shared_tools.visualization_agent
+    args: [data, analysis_type]
+    params:
+      returns: str
+  analyze_customer_churn_factors:
+    type: sync
+    module: retention_agent.agent
+    args: [customer_id, sql_query]
+    params:
+      returns: str
+  analyze_customer_profile_tool:
+    type: sync
+    module: sales_agent.sales_content_tools
+    args: [customer_id, customer_data, sales_promoting_factors, sales_preventing_factors]
+    params:
+      returns: str
+  analyze_customer_protective_factors:
+    type: sync
+    module: retention_agent.agent
+    args: [customer_id, sql_query]
+    params:
+      returns: str
+  analyze_energy_efficiency:
+    type: sync
+    module: energy_efficiency.energy_analysis_tools copy
+    args: [customer_id, analysis_days]
+    params:
+      returns: str
+  analyze_ml_model:
+    type: sync
+    module: portfolio_manager.agent
+    args: [sql_query, model_name, target_event]
+    params:
+      returns: str
+  analyze_model_with_shap_tool:
+    type: sync
+    module: shared_tools.mlagent
+    args: [sql_query, model_name, target_event]
+    params:
+      returns: str
+  analyze_sales_preventing_factors:
+    type: sync
+    module: sales_agent.agent
+    args: [customer_id, sql_query, product_model_name]
+    params:
+      returns: str
+  analyze_sales_promoting_factors:
+    type: sync
+    module: sales_agent.agent
+    args: [customer_id, sql_query, product_model_name]
+    params:
+      returns: str
+  analyze_tou_plan_fit:
+    type: sync
+    module: energy_efficiency.energy_analysis_tools copy
+    args: [customer_id, analysis_days]
+    params:
+      returns: str
+  batch_score:
+    type: sync
+    module: shared_tools.mlagent
+    args: [model_name, customers_data, shap_enabled, bucket_name]
+    params:
+      returns: Dict
+  calculate_customer_clv:
+    type: sync
+    module: portfolio_manager.agent
+    args: [sql_query]
+    params:
+      returns: str
+  chat_with_coordinator:
+    type: sync
+    module: main_agent.agent
+    args: [message, runner, session_service]
+  chat_with_coordinator_async:
+    type: async
+    module: main_agent.agent
+    args: [message, runner, session_service]
+  chat_with_coordinator_live_stream:
+    type: async
+    module: main_agent.agent
+    args: [message, runner, session_service]
+  chat_with_energy_advisor:
+    type: sync
+    module: energy_efficiency.agent copy
+    args: [message, runner]
+  clean_sql_response:
+    type: sync
+    module: sales_agent.subtools
+    args: [raw_response]
+    params:
+      returns: str
+  convert_numpy_types:
+    type: sync
+    module: sales_agent.sales_content_tools
+    args: [obj]
+  convert_to_json_safe:
+    type: sync
+    module: shared_tools.simple_sql_agents
+    args: [value]
+  coordinator_page:
+    type: sync
+    module: main_agent_app
+  create_additional_test_cases:
+    type: sync
+    module: portfolio_manager.evaluation.create_test_cases
+  create_advanced_plot_tool:
+    type: sync
+    module: shared_tools.visualization_agent
+    args: [data, plot_type]
+    params:
+      returns: str
+  create_comprehensive_energy_agent:
+    type: sync
+    module: energy_efficiency.agent copy
+  create_direct_mail_agent:
+    type: sync
+    module: marketing_agent.agent
+  create_download_package:
+    type: sync
+    module: marketing_agent.marketing_content_tools
+    args: [self, session_id]
+    params:
+      returns: Dict
+  create_download_package_tool:
+    type: sync
+    module: marketing_agent.marketing_content_tools
+    args: [session_id]
+    params:
+      returns: str
+  create_email_marketing_agent:
+    type: sync
+    module: marketing_agent.agent
+  create_energy_coordinator_agent:
+    type: sync
+    module: energy_efficiency.agent copy
+  create_exploratory_dashboard:
+    type: sync
+    module: shared_tools.visualization_agent
+    args: [self, data_source]
+    params:
+      returns: str
+  create_landing_page_agent:
+    type: sync
+    module: marketing_agent.agent
+  create_marketing_coordinator_agent:
+    type: sync
+    module: marketing_agent.agent
+  create_portfolio_manager_app:
+    type: sync
+    module: portfolio_manager.agent
+  create_retention_app:
+    type: sync
+    module: retention_agent.agent
+  create_sales_app:
+    type: sync
+    module: sales_agent.agent
+  create_session_dir:
+    type: sync
+    module: marketing_agent.marketing_content_tools
+    args: [self, session_id]
+    params:
+      returns: str
+  create_shap_summary:
+    type: sync
+    module: shared_tools.mlagent
+    args: [self, shap_values, X, base_value]
+  create_social_media_agent:
+    type: sync
+    module: marketing_agent.agent
+  create_specialized_agents:
+    type: sync
+    module: energy_efficiency.agent copy
+  create_visualization:
+    type: async
+    module: shared_tools.visualization_agent
+    args: [self, data_input, viz_request]
+    params:
+      returns: str
+  create_word_document:
+    type: sync
+    module: marketing_agent.marketing_content_tools
+    args: [self, session_id]
+    params:
+      returns: Dict
+  demo_advanced_visualization_agent:
+    type: async
+    module: shared_tools.visualization_agent
+  direct_mail_specialist_tool:
+    type: sync
+    module: marketing_agent.agent
+    args: [campaign_instructions, include_image]
+    params:
+      returns: str
+  email_marketing_specialist_tool:
+    type: sync
+    module: marketing_agent.agent
+    args: [campaign_instructions, include_image]
+    params:
+      returns: str
+  enhance_marketing_prompt:
+    type: sync
+    module: shared_tools.image_gen
+    args: [self, prompt, image_type]
+    params:
+      returns: str
+  execute_python_code:
+    type: sync
+    module: main_agent_app
+    args: [python_code, message_id]
+  execute_query_dataframe_tool:
+    type: sync
+    module: shared_tools.simple_sql_agents
+    args: [sql_query]
+    params:
+      returns: str
+  execute_query_json_tool:
+    type: sync
+    module: shared_tools.simple_sql_agents
+    args: [sql_query]
+    params:
+      returns: str
+  execute_sql_query:
+    type: sync
+    module: portfolio_manager.agent
+    args: [sql_query]
+    params:
+      returns: str
+  extract_customer_data:
+    type: sync
+    module: sales_agent.agent
+    args: [customer_id]
+    params:
+      returns: str
+  extract_python_code:
+    type: sync
+    module: main_agent_app
+    args: [text]
+  full_table_name:
+    type: sync
+    module: portfolio_manager.config
+    args: [self]
+    params:
+      returns: str
+  generate_call_script_tool:
+    type: sync
+    module: sales_agent.sales_content_tools
+    args: [customer_id, customer_data, sales_promoting_factors, sales_preventing_factors, product_name, sales_probability,
+      call_type, approach]
+    params:
+      returns: str
+  generate_marketing_copy_tool:
+    type: sync
+    module: marketing_agent.marketing_content_tools
+    args: [campaign_type, product_or_service, target_audience, key_message, call_to_action, tone, length]
+    params:
+      returns: str
+  generate_marketing_image:
+    type: sync
+    module: shared_tools.image_gen
+    args: [self, prompt, image_type, session_id, filename, resize]
+    params:
+      returns: dict
+  generate_marketing_image_tool:
+    type: sync
+    module: shared_tools.image_gen
+    args: [prompt, image_type, filename, resize_for_email, session_id]
+    params:
+      returns: str
+  generate_marketing_package:
+    type: sync
+    module: marketing_agent.agent
+    args: [campaign_instructions, medium]
+    params:
+      returns: Dict
+  generate_personalized_call_script:
+    type: sync
+    module: retention_agent.agent
+    args: [customer_id, customer_data, churn_factors, protective_factors, call_type, approach]
+    params:
+      returns: str
+  generate_personalized_email:
+    type: sync
+    module: retention_agent.agent
+    args: [customer_id, customer_data, churn_factors, protective_factors, email_type, tone]
+    params:
+      returns: str
+  generate_retention_email_tool:
+    type: sync
+    module: retention_agent.retention_content_tools
+    args: [customer_id, customer_data, churn_factors, protective_factors, email_type, tone]
+    params:
+      returns: str
+  generate_sales_email_tool:
+    type: sync
+    module: sales_agent.sales_content_tools
+    args: [customer_id, customer_data, sales_promoting_factors, sales_preventing_factors, product_name, sales_probability,
+      email_type, tone]
+    params:
+      returns: str
+  generate_sql:
+    type: sync
+    module: shared_tools.simple_sql_agents
+    args: [self, user_question]
+    params:
+      returns: str
+  generate_sql_query:
+    type: sync
+    module: portfolio_manager.agent
+    args: [query_description]
+    params:
+      returns: str
+  generate_sql_query_tool:
+    type: sync
+    module: shared_tools.simple_sql_agents
+    args: [user_question]
+    params:
+      returns: str
+  get_approach_description:
+    type: sync
+    module: sales_agent.config
+    args: [self, approach]
+    params:
+      returns: str
+  get_call_type_description:
+    type: sync
+    module: sales_agent.config
+    args: [self, call_type]
+    params:
+      returns: str
+  get_customer_energy_insights:
+    type: sync
+    module: energy_efficiency.energy_analysis_tools copy
+    args: [customer_id, analysis_days]
+    params:
+      returns: str
+  get_email_type_description:
+    type: sync
+    module: sales_agent.config
+    args: [self, email_type]
+    params:
+      returns: str
+  get_embedding:
+    type: sync
+    module: shared_tools.simple_sql_agents
+    args: [self, text]
+  get_model_description:
+    type: sync
+    module: portfolio_manager.config
+    args: [self, model_name]
+    params:
+      returns: str
+  get_prediction:
+    type: sync
+    module: sales_agent.sales_content_tools
+    args: [plan]
+  get_probability_category:
+    type: sync
+    module: sales_agent.config
+    args: [self, probability]
+    params:
+      returns: str
+  get_product_model_name:
+    type: sync
+    module: sales_agent.config
+    args: [self, product_name]
+    params:
+      returns: str
+  get_sales_eligibility_customer:
+    type: sync
+    module: sales_agent.sales_content_tools
+    args: [customer_id]
+    params:
+      returns: Dict
+  get_session_image_dir:
+    type: sync
+    module: shared_tools.image_gen
+    args: [self, session_id]
+    params:
+      returns: str
+  get_sql_data:
+    type: sync
+    module: visualization_agent.agent
+    args: [user_request, tool_context]
+    params:
+      returns: Dict
+  get_tone_description:
+    type: sync
+    module: sales_agent.config
+    args: [self, tone]
+    params:
+      returns: str
+  identify_sales_opportunities:
+    type: sync
+    module: sales_agent.agent
+    args: [customer_id]
+    params:
+      returns: str
+  initialize_content_manager:
+    type: sync
+    module: marketing_agent.marketing_content_tools
+  initialize_image_generator:
+    type: sync
+    module: shared_tools.image_gen
+  initialize_sql_components:
+    type: sync
+    module: shared_tools.simple_sql_agents
+  is_valid_sql:
+    type: sync
+    module: sales_agent.subtools
+    args: [sql_query]
+    params:
+      returns: bool
+  list_session_content_tool:
+    type: sync
+    module: marketing_agent.marketing_content_tools
+    args: [session_id]
+    params:
+      returns: str
+  live_tracking:
+    type: async
+    module: main_agent_app
+  load_and_score:
+    type: sync
+    module: shared_tools.mlagent
+    args: [model_name, customer_data, shap_enabled, bucket_name]
+    params:
+      returns: Dict
+  load_categories_from_gcs:
+    type: sync
+    module: shared_tools.mlagent
+    args: [self, categories_filename]
+  load_coordinator_agent:
+    type: sync
+    module: main_agent_app
+  load_eval_set:
+    type: sync
+    module: portfolio_manager.evaluation.run_evaluation
+    args: [eval_set_path]
+  load_object_from_gcs:
+    type: sync
+    module: shared_tools.mlagent
+    args: [self, object_name, folder]
+  main:
+    type: sync
+    module: main_agent_app
+  marketing_coordinator_tool:
+    type: sync
+    module: marketing_agent.agent
+    args: [campaign_instructions, requested_medium]
+    params:
+      returns: str
+  marketing_page:
+    type: sync
+    module: main_agent_app
+  output_directory:
+    type: sync
+    module: sales_agent.config
+    args: [self]
+    params:
+      returns: str
+  prepare_features:
+    type: sync
+    module: shared_tools.mlagent
+    args: [self, data, use_training_categories]
+    params:
+      returns: pd.DataFrame
+  process_coordinator_message:
+    type: sync
+    module: main_agent_app
+    args: [user_input]
+  process_marketing_message:
+    type: sync
+    module: main_agent_app
+    args: [campaign_input, selected_medium]
+  register_image_file:
+    type: sync
+    module: marketing_agent.marketing_content_tools
+    args: [self, session_id, image_path, image_type, filename]
+  register_session_image_tool:
+    type: sync
+    module: marketing_agent.marketing_content_tools
+    args: [session_id, image_path, image_type, filename]
+    params:
+      returns: str
+  resize_for_marketing:
+    type: sync
+    module: shared_tools.image_gen
+    args: [self, image_path, width, height]
+    params:
+      returns: bool
+  run_coordinator_examples:
+    type: sync
+    module: main_agent.agent
+  run_energy_advisor_examples:
+    type: sync
+    module: energy_efficiency.agent copy
+  run_interactive:
+    type: sync
+    module: sales_agent.agent
+  run_interactive_retention_agent:
+    type: sync
+    module: retention_agent.agent
+  run_portfolio_evaluation:
+    type: sync
+    module: portfolio_manager.evaluation.run_evaluation
+  save_generated_image:
+    type: sync
+    module: shared_tools.image_gen
+    args: [self, response, output_path]
+    params:
+      returns: bool
+  save_marketing_content:
+    type: sync
+    module: marketing_agent.marketing_content_tools
+    args: [self, content, content_type, session_id, filename]
+    params:
+      returns: Dict
+  save_marketing_content_tool:
+    type: sync
+    module: marketing_agent.marketing_content_tools
+    args: [content, content_type, session_id, filename]
+    params:
+      returns: str
+  score_model:
+    type: sync
+    module: shared_tools.mlagent
+    args: [self, model_name, features, shap_enabled]
+    params:
+      returns: Dict
+  search_schema:
+    type: sync
+    module: shared_tools.simple_sql_agents
+    args: [self, user_question]
+  search_similar_queries:
+    type: sync
+    module: shared_tools.simple_sql_agents
+    args: [self, user_question]
+  setup_agent:
+    type: sync
+    module: shared_tools.visualization_agent
+    args: [self]
+  setup_energy_advisor_session:
+    type: sync
+    module: energy_efficiency.agent copy
+    args: [agent_type]
+  setup_main_coordinator_session:
+    type: sync
+    module: main_agent.agent
+  sigmoid:
+    type: sync
+    module: shared_tools.mlagent
+    args: [self, x]
+  social_media_specialist_tool:
+    type: sync
+    module: marketing_agent.agent
+    args: [campaign_instructions, include_image]
+    params:
+      returns: str
+  test_marketing_image_generation:
+    type: sync
+    module: shared_tools.image_gen
+  test_sales_agent:
+    type: sync
+    module: sales_agent.agent
+  validate_approach:
+    type: sync
+    module: sales_agent.config
+    args: [self, approach]
+    params:
+      returns: bool
+  validate_call_type:
+    type: sync
+    module: sales_agent.config
+    args: [self, call_type]
+    params:
+      returns: bool
+  validate_email_type:
+    type: sync
+    module: sales_agent.config
+    args: [self, email_type]
+    params:
+      returns: bool
+  validate_model:
+    type: sync
+    module: portfolio_manager.config
+    args: [self, model_name]
+    params:
+      returns: bool
+  validate_tone:
+    type: sync
+    module: sales_agent.config
+    args: [self, tone]
+    params:
+      returns: bool
+  web_landing_page_specialist_tool:
+    type: sync
+    module: marketing_agent.agent
+    args: [campaign_instructions, include_image]
+    params:
+      returns: str
+
+variables:
+  GOOGLE_CLOUD_LOCATION:
+    type: env
+    params:
+      caller: [os.getenv, os.environ]
+      path: [shared_tools.image_gen, marketing_agent.config, marketing_agent.agent, retention_agent.config, sales_agent.config,
+        portfolio_manager.config]
+  GOOGLE_CLOUD_PROJECT:
+    type: env
+    params:
+      caller: [os.getenv, os.environ]
+      path: [shared_tools.image_gen, marketing_agent.config, retention_agent.agent, marketing_agent.agent, retention_agent.config,
+        sales_agent.config, sales_agent.agent, portfolio_manager.config]
+  GOOGLE_GENAI_USE_VERTEXAI:
+    type: env
+    params:
+      caller: [os.environ]
+  ML_MODELS_BUCKET:
+    type: env
+    params:
+      caller: [os.getenv]
+      path: [marketing_agent.config, retention_agent.config, sales_agent.config, portfolio_manager.config]
+
+files:
+  base_output_dir:
+    type: variable
+    actions: [read]
+    params:
+      caller: [os.makedirs]
+  eval_set_path:
+    type: variable
+    actions: [read]
+    params:
+      caller: [open, json.load]
+      alias: [f]
+  output_path:
+    type: variable
+    actions: [read]
+    params:
+      caller: [pathlib.Path]
+  portfolio_eval_set.json:
+    type: literal
+    actions: [read]
+    params:
+      caller: [run_portfolio_evaluation]
+      path: [Path.parent]
